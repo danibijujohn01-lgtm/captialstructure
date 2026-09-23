@@ -1,16 +1,4582 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Capital Structure Studio | EBIT–EPS & Leverage Calculator</title>
-    <meta name="description" content="Modern financial calculator and learning tool for EBIT-EPS analysis, break-even indifference points, and capital structure optimization." />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-  </head>
-  <body class="bg-slate-50 text-slate-900">
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Capital Structure Studio | EBITâ€“EPS & Leverage Calculator</title>
+  <style>
+/* =====================================================
+   CAPITAL STRUCTURE STUDIO - MODERN CSS STYLESHEET
+   ===================================================== */
+
+:root {
+  --primary: #4f46e5;
+  --primary-hover: #4338ca;
+  --primary-light: #eef2ff;
+  --primary-border: #c7d2fe;
+
+  --success: #10b981;
+  --success-dark: #065f46;
+  --success-light: #ecfdf5;
+  --success-border: #a7f3d0;
+
+  --warning: #f59e0b;
+  --warning-dark: #92400e;
+  --warning-light: #fffbeb;
+  --warning-border: #fde68a;
+
+  --danger: #ef4444;
+  --danger-light: #fef2f2;
+  --danger-border: #fecaca;
+
+  --blue: #3b82f6;
+  --blue-light: #eff6ff;
+  --blue-border: #bfdbfe;
+
+  --purple: #8b5cf6;
+  --purple-light: #f5f3ff;
+  --purple-border: #ddd6fe;
+
+  --slate-50: #f8fafc;
+  --slate-100: #f1f5f9;
+  --slate-200: #e2e8f0;
+  --slate-300: #cbd5e1;
+  --slate-400: #94a3b8;
+  --slate-500: #64748b;
+  --slate-600: #475569;
+  --slate-700: #334155;
+  --slate-800: #1e293b;
+  --slate-900: #0f172a;
+
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+  --radius-full: 9999px;
+
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px -1px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--slate-50);
+  color: var(--slate-900);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* =====================================================
+   HEADER & NAVBAR
+   ===================================================== */
+.app-header {
+  background: #ffffff;
+  border-bottom: 1px solid var(--slate-200);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: var(--shadow-xs);
+}
+
+.header-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.header-top {
+  display: flex;
+  flex-direction: column;
+  padding: 0.85rem 0;
+  gap: 0.75rem;
+  border-bottom: 1px solid var(--slate-100);
+}
+
+@media (min-width: 900px) {
+  .header-top {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.brand-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--primary), #3b82f6);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.25);
+  flex-shrink: 0;
+}
+
+.brand-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.brand-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--slate-900);
+  letter-spacing: -0.02em;
+}
+
+.badge-sub {
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid var(--primary-border);
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-full);
+}
+
+.brand-desc {
+  font-size: 0.75rem;
+  color: var(--slate-500);
+}
+
+.header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Currency Picker */
+.currency-group {
+  display: flex;
+  align-items: center;
+  background: var(--slate-100);
+  padding: 2px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--slate-200);
+  font-size: 0.75rem;
+}
+
+.ctrl-label {
+  padding: 0 0.4rem;
+  font-weight: 600;
+  color: var(--slate-500);
+}
+
+.curr-btn {
+  border: none;
+  background: transparent;
+  padding: 0.3rem 0.55rem;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 0.75rem;
+  color: var(--slate-600);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.curr-btn:hover {
+  color: var(--slate-900);
+}
+
+.curr-btn.active {
+  background: #ffffff;
+  color: var(--primary);
+  box-shadow: var(--shadow-xs);
+  border: 1px solid rgba(203, 213, 225, 0.7);
+}
+
+.preset-select {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--slate-700);
+  background: var(--slate-50);
+  border: 1px solid var(--slate-300);
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  outline: none;
+}
+
+.preset-select:hover {
+  background: var(--slate-100);
+}
+
+/* Nav Tabs */
+.nav-tabs {
+  display: flex;
+  gap: 0.35rem;
+  overflow-x: auto;
+  padding: 0.5rem 0;
+  scrollbar-width: none;
+}
+
+.nav-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.nav-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 0.85rem;
+  border-radius: var(--radius-md);
+  border: none;
+  background: transparent;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--slate-600);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.nav-tab:hover {
+  background: var(--slate-100);
+  color: var(--slate-900);
+}
+
+.nav-tab.active {
+  background: var(--primary);
+  color: #ffffff;
+  box-shadow: var(--shadow-sm);
+}
+
+.nav-tab.active .badge-mini {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
+.badge-mini {
+  font-size: 0.65rem;
+  font-weight: 700;
+  background: var(--primary-light);
+  color: var(--primary);
+  padding: 0.1rem 0.4rem;
+  border-radius: var(--radius-full);
+}
+
+.badge-count {
+  font-size: 0.65rem;
+  font-weight: 700;
+  background: #ffffff;
+  color: var(--primary);
+  padding: 0.1rem 0.4rem;
+  border-radius: var(--radius-full);
+}
+
+/* =====================================================
+   MAIN LAYOUT & BUTTONS
+   ===================================================== */
+.main-container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem 1rem;
+}
+
+.tab-panel {
+  display: none;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.tab-panel.active {
+  display: flex;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+  box-shadow: 0 2px 4px rgba(79, 70, 229, 0.15);
+}
+
+.btn-primary:hover {
+  background: var(--primary-hover);
+}
+
+.btn-secondary {
+  background: #ffffff;
+  color: var(--slate-700);
+  border-color: var(--slate-300);
+  box-shadow: var(--shadow-xs);
+}
+
+.btn-secondary:hover {
+  background: var(--slate-50);
+}
+
+.btn-outline {
+  background: #ffffff;
+  color: var(--slate-600);
+  border-color: var(--slate-300);
+}
+
+.btn-outline:hover {
+  background: var(--slate-100);
+  color: var(--slate-900);
+}
+
+.btn-danger {
+  background: var(--danger-light);
+  color: var(--danger);
+  border-color: var(--danger-border);
+}
+
+.btn-danger:hover {
+  background: #fee2e2;
+}
+
+/* =====================================================
+   CARDS & FORMS
+   ===================================================== */
+.card {
+  background: #ffffff;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--slate-200);
+  box-shadow: var(--shadow-xs);
+  overflow: hidden;
+}
+
+.p-5 {
+  padding: 1.25rem;
+}
+
+.card-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--slate-900);
+}
+
+.card-desc {
+  font-size: 0.75rem;
+  color: var(--slate-500);
+  margin-top: 0.15rem;
+}
+
+.section-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .section-toolbar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--slate-900);
+  letter-spacing: -0.01em;
+}
+
+.section-subtitle {
+  font-size: 0.75rem;
+  color: var(--slate-500);
+  margin-top: 0.15rem;
+}
+
+/* Controls Grid */
+.card-controls {
+  padding: 1.25rem;
+}
+
+.controls-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 900px) {
+  .controls-grid {
+    grid-template-columns: 7fr 5fr;
+  }
+}
+
+.control-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.control-col.bg-subtle {
+  background: var(--slate-50);
+  padding: 1rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--slate-200);
+}
+
+.control-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.control-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--slate-800);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.val-badge {
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-full);
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid var(--primary-border);
+}
+
+.badge-green {
+  background: var(--success-light);
+  color: var(--success-dark);
+  border-color: var(--success-border);
+}
+
+.stepper-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.form-input {
+  font-family: inherit;
+  font-size: 0.85rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--slate-300);
+  background: #ffffff;
+  color: var(--slate-900);
+  outline: none;
+  transition: all 0.15s ease;
+  width: 100%;
+}
+
+.form-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+.stepper-row .form-input {
+  flex: 1;
+  min-width: 140px;
+}
+
+.btn-group-step, .tax-presets {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.step-btn, .tax-preset-btn {
+  font-family: inherit;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.45rem 0.6rem;
+  border-radius: var(--radius-sm);
+  background: var(--slate-100);
+  border: 1px solid var(--slate-200);
+  color: var(--slate-700);
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.step-btn:hover, .tax-preset-btn:hover {
+  background: var(--slate-200);
+}
+
+.tax-preset-btn.active {
+  background: var(--success);
+  color: #fff;
+  border-color: var(--success);
+}
+
+.range-slider {
+  width: 100%;
+  accent-color: var(--primary);
+  cursor: pointer;
+  margin-top: 0.25rem;
+}
+
+.slider-ticks {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  color: var(--slate-400);
+  margin-top: -0.25rem;
+}
+
+.input-suffix-wrap {
+  position: relative;
+  width: 90px;
+}
+
+.input-suffix {
+  position: absolute;
+  right: 0.6rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--slate-400);
+  pointer-events: none;
+}
+
+.helper-text {
+  font-size: 0.7rem;
+  color: var(--slate-500);
+}
+
+/* =====================================================
+   PLAN CARDS GRID
+   ===================================================== */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1rem;
+}
+
+.plan-card {
+  background: #ffffff;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--slate-200);
+  box-shadow: var(--shadow-xs);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.15s ease;
+}
+
+.plan-card:hover {
+  border-color: var(--slate-300);
+  box-shadow: var(--shadow-md);
+}
+
+.plan-card.highlight-best {
+  border-color: var(--success-border);
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+.card-color-stripe {
+  height: 6px;
+  width: 100%;
+}
+
+.plan-card-body {
+  padding: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  flex: 1;
+}
+
+.plan-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.plan-card-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--slate-900);
+}
+
+.plan-card-sub {
+  font-size: 0.7rem;
+  color: var(--slate-500);
+}
+
+.plan-actions-group {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.icon-btn {
+  background: transparent;
+  border: none;
+  padding: 0.3rem;
+  border-radius: var(--radius-sm);
+  color: var(--slate-400);
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.icon-btn:hover {
+  background: var(--slate-100);
+  color: var(--slate-700);
+}
+
+.icon-btn.danger:hover {
+  background: var(--danger-light);
+  color: var(--danger);
+}
+
+/* Capital Ratio Stack Bar */
+.ratio-stack-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.ratio-stack-bar {
+  height: 8px;
+  width: 100%;
+  background: var(--slate-100);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  display: flex;
+}
+
+.ratio-seg {
+  height: 100%;
+}
+
+.ratio-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  font-weight: 600;
+}
+
+.ratio-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.ratio-box {
+  background: var(--slate-50);
+  padding: 0.5rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--slate-100);
+}
+
+.ratio-box-label {
+  font-size: 0.65rem;
+  color: var(--slate-400);
+  display: block;
+}
+
+.ratio-box-val {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--slate-800);
+}
+
+/* Card EPS Box */
+.card-eps-box {
+  background: var(--slate-50);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-lg);
+  padding: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.card-eps-box.highlight {
+  background: var(--success-light);
+  border-color: var(--success-border);
+}
+
+.eps-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--slate-500);
+  display: block;
+}
+
+.eps-val {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--slate-900);
+}
+
+.best-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.2rem 0.55rem;
+  background: var(--success);
+  color: #fff;
+  border-radius: var(--radius-full);
+}
+
+.plan-card-footer {
+  padding: 0.65rem 1.1rem;
+  background: var(--slate-50);
+  border-top: 1px solid var(--slate-100);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.7rem;
+  color: var(--slate-500);
+}
+
+.link-btn {
+  background: transparent;
+  border: none;
+  color: var(--primary);
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0;
+  font-size: inherit;
+}
+
+.link-btn:hover {
+  text-decoration: underline;
+}
+
+/* =====================================================
+   DATA TABLES
+   ===================================================== */
+.table-card {
+  margin-top: 0.5rem;
+}
+
+.table-header {
+  padding: 1rem 1.25rem;
+  background: var(--slate-50);
+  border-bottom: 1px solid var(--slate-200);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .table-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.formula-chip {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--primary);
+  background: var(--primary-light);
+  border: 1px solid var(--primary-border);
+  padding: 0.25rem 0.65rem;
+  border-radius: var(--radius-md);
+}
+
+.table-scroll {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.75rem;
+  text-align: left;
+}
+
+.data-table th {
+  background: var(--slate-100);
+  color: var(--slate-700);
+  font-weight: 700;
+  padding: 0.75rem 0.85rem;
+  border-bottom: 1px solid var(--slate-200);
+  white-space: nowrap;
+}
+
+.data-table td {
+  padding: 0.75rem 0.85rem;
+  border-bottom: 1px solid var(--slate-100);
+  color: var(--slate-700);
+  white-space: nowrap;
+}
+
+.data-table tr:hover td {
+  background: rgba(248, 250, 252, 0.8);
+}
+
+.data-table tr.row-best td {
+  background: rgba(236, 253, 245, 0.4);
+}
+
+.text-right { text-align: right; }
+.text-center { text-align: center; }
+
+.plan-cell-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.cell-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.eps-pill {
+  display: inline-block;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  background: var(--slate-100);
+  color: var(--slate-900);
+}
+
+.eps-pill.best {
+  background: var(--success);
+  color: #ffffff;
+}
+
+/* =====================================================
+   INTERACTIVE CANVAS CHARTS
+   ===================================================== */
+.chart-card {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.chart-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--slate-100);
+  padding-bottom: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .chart-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.chart-legend-toggles {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 0.75rem;
+  color: var(--slate-600);
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  cursor: pointer;
+  background: var(--slate-50);
+  padding: 0.25rem 0.55rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--slate-200);
+}
+
+.canvas-container {
+  position: relative;
+  width: 100%;
+  height: 420px;
+  background: #ffffff;
+}
+
+.canvas-container canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.chart-tooltip {
+  position: absolute;
+  z-index: 10;
+  background: rgba(15, 23, 42, 0.95);
+  backdrop-filter: blur(4px);
+  color: #fff;
+  border-radius: var(--radius-md);
+  padding: 0.6rem 0.8rem;
+  font-size: 0.7rem;
+  pointer-events: none;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--slate-700);
+  min-width: 180px;
+  transform: translate(-50%, -115%);
+}
+
+.chart-tooltip.hidden { display: none; }
+
+.chart-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: var(--slate-50);
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--slate-200);
+  font-size: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .chart-footer {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.legend-indicator-row {
+  display: flex;
+  gap: 0.75rem;
+  font-size: 0.7rem;
+}
+
+.legend-dot-item {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot-amber { background: var(--warning); }
+.dot-indigo { background: var(--primary); }
+
+/* =====================================================
+   TAB 2: INDIFFERENCE POINT STYLES
+   ===================================================== */
+.hero-banner {
+  background: linear-gradient(135deg, var(--slate-900), #1e1b4b);
+  color: #ffffff;
+  padding: 1.5rem;
+  border-radius: var(--radius-xl);
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  box-shadow: var(--shadow-md);
+}
+
+@media (min-width: 768px) {
+  .hero-banner {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.hero-content {
+  max-width: 650px;
+}
+
+.hero-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  background: rgba(99, 102, 241, 0.25);
+  color: #c7d2fe;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(199, 210, 254, 0.3);
+  display: inline-block;
+  margin-bottom: 0.5rem;
+}
+
+.hero-title {
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.01em;
+}
+
+.hero-desc {
+  font-size: 0.75rem;
+  color: var(--slate-300);
+  margin-top: 0.35rem;
+  line-height: 1.6;
+}
+
+.hero-metric-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(8px);
+  padding: 0.85rem 1.25rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.hero-metric-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  color: #c7d2fe;
+  display: block;
+}
+
+.hero-metric-val {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #fff;
+  display: block;
+}
+
+.hero-metric-sub {
+  font-size: 0.65rem;
+  color: var(--slate-400);
+}
+
+/* Selector Card */
+.selector-card {
+  padding: 1.25rem;
+}
+
+.pair-selector-row {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .pair-selector-row {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.pair-col {
+  width: 100%;
+  flex: 1;
+}
+
+.vs-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-weight: 800;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--primary-border);
+  flex-shrink: 0;
+}
+
+.form-select {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--slate-300);
+  background: var(--slate-50);
+  font-size: 0.85rem;
+  color: var(--slate-900);
+  outline: none;
+  cursor: pointer;
+}
+
+/* Callout Block */
+.indiff-callout {
+  background: linear-gradient(135deg, #fffbeb, #fff7ed);
+  border: 2px solid var(--warning);
+  border-radius: var(--radius-xl);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  box-shadow: var(--shadow-xs);
+}
+
+.quote-box {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #78350f;
+  line-height: 1.6;
+  border-left: 4px solid var(--warning);
+  padding-left: 1rem;
+}
+
+.highlight-math {
+  color: #b45309;
+  text-decoration: underline;
+  text-decoration-color: #fde68a;
+  text-decoration-thickness: 3px;
+}
+
+.decision-rules-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .decision-rules-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.decision-card {
+  padding: 1rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--slate-200);
+  background: rgba(255, 255, 255, 0.85);
+  font-size: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.decision-card.active-zone {
+  border-color: var(--success);
+  background: var(--success-light);
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
+}
+
+.decision-card-head {
+  font-weight: 800;
+  text-transform: uppercase;
+  font-size: 0.7rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.zone-pill {
+  background: var(--success);
+  color: #fff;
+  font-size: 0.65rem;
+  padding: 0.1rem 0.45rem;
+  border-radius: var(--radius-full);
+}
+
+/* Math Derivation Box */
+.derivation-card {
+  background: var(--slate-50);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-xl);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.math-row {
+  background: #ffffff;
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--slate-200);
+  font-size: 0.75rem;
+  overflow-x: auto;
+}
+
+/* =====================================================
+   TAB 3: COMPARE VIEW & DONUTS
+   ===================================================== */
+.summary-header-card {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .summary-header-card {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.metric-pill-group {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.metric-pill {
+  background: var(--slate-50);
+  border: 1px solid var(--slate-200);
+  padding: 0.4rem 0.8rem;
+  border-radius: var(--radius-md);
+  text-align: right;
+}
+
+.pill-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  color: var(--slate-500);
+  display: block;
+}
+
+.pill-val {
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--slate-900);
+}
+
+.compare-charts-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 900px) {
+  .compare-charts-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.chart-box {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.box-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  border-bottom: 1px solid var(--slate-100);
+  padding-bottom: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .box-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.legend-chips {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.65rem;
+  font-weight: 600;
+}
+
+.legend-chip {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.chip-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.bg-blue { background: var(--blue); }
+.bg-green { background: var(--success); }
+.bg-purple { background: var(--purple); }
+
+.canvas-wrap-small {
+  height: 260px;
+  width: 100%;
+}
+
+.canvas-wrap-small canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.donuts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 0.75rem;
+}
+
+.donut-card {
+  background: var(--slate-50);
+  padding: 0.75rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--slate-200);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.donut-card-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.donut-canvas-wrap {
+  width: 110px;
+  height: 110px;
+  position: relative;
+  margin: 0.35rem 0;
+}
+
+.donut-canvas-wrap canvas {
+  width: 100%;
+  height: 100%;
+}
+
+.donut-center-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.donut-center-pct {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--slate-800);
+}
+
+.donut-center-lbl {
+  font-size: 0.6rem;
+  color: var(--slate-400);
+}
+
+/* Statement Cards Grid */
+.statement-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 1.25rem;
+}
+
+.statement-card {
+  background: #ffffff;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--slate-200);
+  box-shadow: var(--shadow-xs);
+  overflow: hidden;
+}
+
+.statement-card-body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.statement-rows {
+  background: var(--slate-50);
+  border: 1px solid var(--slate-100);
+  border-radius: var(--radius-lg);
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+}
+
+.statement-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.border-top-bold {
+  border-top: 1px solid var(--slate-300);
+  padding-top: 0.35rem;
+  font-weight: 700;
+  color: var(--slate-900);
+}
+
+.border-top-highlight {
+  border-top: 2px solid var(--primary-border);
+  padding-top: 0.5rem;
+  margin-top: 0.25rem;
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: var(--primary);
+}
+
+/* =====================================================
+   TAB 4: SENSITIVITY VIEW
+   ===================================================== */
+.controls-card {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.btn-group-presets {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.add-point-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid var(--slate-100);
+}
+
+@media (min-width: 640px) {
+  .add-point-bar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.add-point-form {
+  display: flex;
+  gap: 0.5rem;
+  max-width: 320px;
+}
+
+.active-chips-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.chips-label {
+  font-size: 0.75rem;
+  color: var(--slate-400);
+  font-weight: 600;
+}
+
+.chips-list {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.chip-item {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.2rem 0.5rem;
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid var(--primary-border);
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.chip-remove {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--primary);
+  font-size: 0.85rem;
+  line-height: 1;
+}
+
+.chip-remove:hover {
+  color: var(--danger);
+}
+
+/* =====================================================
+   TAB 5: LEARNING LAB STYLES
+   ===================================================== */
+.sub-nav-tabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--slate-200);
+  padding-bottom: 0.5rem;
+}
+
+.sub-tab {
+  background: transparent;
+  border: none;
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius-md);
+  color: var(--slate-600);
+  cursor: pointer;
+}
+
+.sub-tab.active {
+  background: var(--primary);
+  color: #fff;
+}
+
+.sub-panel {
+  display: none;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.sub-panel.active {
+  display: flex;
+}
+
+.concept-card {
+  background: #ffffff;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--slate-200);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+  box-shadow: var(--shadow-xs);
+}
+
+.concept-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.concept-icon {
+  font-size: 1.3rem;
+}
+
+.concept-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--slate-900);
+}
+
+.concept-text {
+  font-size: 0.8rem;
+  color: var(--slate-700);
+  line-height: 1.6;
+}
+
+.concept-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 0.75rem;
+}
+
+.mini-card {
+  padding: 0.85rem;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  font-size: 0.75rem;
+}
+
+.bg-blue-subtle { background: var(--blue-light); border-color: var(--blue-border); }
+.bg-green-subtle { background: var(--success-light); border-color: var(--success-border); }
+.bg-purple-subtle { background: var(--purple-light); border-color: var(--purple-border); }
+
+.decision-box {
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  font-size: 0.75rem;
+  color: #92400e;
+}
+
+.decision-box ul {
+  padding-left: 1.25rem;
+  margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.tradeoff-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.75rem;
+}
+
+.tradeoff-item {
+  background: var(--slate-50);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-md);
+  padding: 0.75rem;
+  font-size: 0.75rem;
+}
+
+/* Formula Cards */
+.formula-card {
+  background: #ffffff;
+  border-radius: var(--radius-xl);
+  border: 1px solid var(--slate-200);
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  box-shadow: var(--shadow-xs);
+}
+
+.formula-tag {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--primary);
+  text-transform: uppercase;
+}
+
+.formula-math {
+  background: var(--primary-light);
+  border: 1px solid var(--primary-border);
+  padding: 1rem;
+  border-radius: var(--radius-lg);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1e1b4b;
+  overflow-x: auto;
+}
+
+.tag-amber { color: var(--warning-dark); }
+.formula-card:has(.tag-amber) .formula-math {
+  background: var(--warning-light);
+  border-color: var(--warning-border);
+  color: #78350f;
+}
+
+.tag-green { color: var(--success-dark); }
+.formula-card:has(.tag-green) .formula-math {
+  background: var(--success-light);
+  border-color: var(--success-border);
+  color: #065f46;
+}
+
+.tag-purple { color: #581c87; }
+.formula-card:has(.tag-purple) .formula-math {
+  background: var(--purple-light);
+  border-color: var(--purple-border);
+  color: #3b0764;
+}
+
+.formula-variables {
+  list-style: none;
+  font-size: 0.75rem;
+  color: var(--slate-600);
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* Quiz Styles */
+.quiz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--slate-100);
+  padding-bottom: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.quiz-score-badge {
+  font-size: 0.85rem;
+  font-weight: 800;
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid var(--primary-border);
+  padding: 0.35rem 0.85rem;
+  border-radius: var(--radius-full);
+}
+
+.quiz-questions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.quiz-q-card {
+  background: var(--slate-50);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.quiz-q-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--slate-900);
+}
+
+.quiz-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.quiz-opt-btn {
+  background: #ffffff;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-md);
+  padding: 0.65rem 0.85rem;
+  font-family: inherit;
+  font-size: 0.75rem;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.quiz-opt-btn:hover {
+  background: var(--slate-100);
+}
+
+.quiz-opt-btn.selected {
+  background: var(--primary-light);
+  border-color: var(--primary);
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.quiz-opt-btn.correct {
+  background: var(--success-light);
+  border-color: var(--success);
+  color: var(--success-dark);
+  font-weight: 700;
+}
+
+.quiz-opt-btn.wrong {
+  background: var(--danger-light);
+  border-color: var(--danger);
+  color: var(--danger);
+  font-weight: 700;
+}
+
+.quiz-explanation {
+  background: #ffffff;
+  padding: 0.65rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--slate-200);
+  font-size: 0.7rem;
+  color: var(--slate-600);
+}
+
+.quiz-footer {
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+/* =====================================================
+   TAB 6: HISTORY
+   ===================================================== */
+.history-actions {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.history-items-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.history-card {
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-lg);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: #ffffff;
+}
+
+.history-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.history-card-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--slate-900);
+}
+
+.history-card-meta {
+  font-size: 0.7rem;
+  color: var(--slate-400);
+}
+
+/* =====================================================
+   MODALS
+   ===================================================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(15, 23, 42, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.modal-overlay.hidden { display: none; }
+
+.modal-dialog {
+  background: #ffffff;
+  border-radius: var(--radius-xl);
+  max-width: 580px;
+  width: 100%;
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--slate-200);
+  overflow: hidden;
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  animation: modalIn 0.2s ease;
+}
+
+.modal-dialog-lg {
+  max-width: 720px;
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.modal-header {
+  padding: 1.1rem 1.5rem;
+  background: var(--slate-50);
+  border-bottom: 1px solid var(--slate-200);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-gradient {
+  background: linear-gradient(135deg, var(--primary), #3b82f6);
+  color: #fff;
+}
+
+.modal-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--slate-900);
+}
+
+.text-white { color: #fff; }
+.text-white-80 { color: rgba(255, 255, 255, 0.85); }
+
+.modal-desc {
+  font-size: 0.75rem;
+  color: var(--slate-500);
+}
+
+.modal-close {
+  background: transparent;
+  border: none;
+  font-size: 1.4rem;
+  line-height: 1;
+  color: var(--slate-400);
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+.modal-close:hover {
+  color: var(--slate-700);
+}
+
+.modal-body {
+  padding: 1.25rem 1.5rem;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.modal-footer {
+  padding: 0.85rem 1.5rem;
+  background: var(--slate-50);
+  border-top: 1px solid var(--slate-200);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.form-row {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.flex-1 { flex: 1; }
+.flex-2 { flex: 2; }
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.form-label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--slate-700);
+}
+
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.form-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.form-box {
+  padding: 0.85rem;
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  border: 1px solid transparent;
+}
+
+.box-title {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.text-blue { color: #1e40af; }
+.text-green { color: #065f46; }
+.text-purple { color: #581c87; }
+.text-danger { color: var(--danger); }
+
+.calc-preview {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 0.4rem 0.6rem;
+  border-radius: var(--radius-sm);
+}
+
+.total-capital-bar {
+  background: var(--slate-100);
+  padding: 0.75rem;
+  border-radius: var(--radius-md);
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--slate-700);
+}
+
+.palette-picker {
+  display: flex;
+  gap: 0.35rem;
+  margin-top: 0.25rem;
+}
+
+.palette-dot {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.palette-dot:hover { transform: scale(1.15); }
+.palette-dot.active {
+  border-color: var(--slate-800);
+  transform: scale(1.15);
+}
+
+.form-hint {
+  font-size: 0.65rem;
+  color: var(--slate-500);
+  font-style: italic;
+}
+
+/* Step breakdown in modal */
+.step-item {
+  background: var(--slate-50);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-lg);
+  padding: 0.85rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.step-item-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+
+.step-num-badge {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.65rem;
+  margin-right: 0.35rem;
+}
+
+.step-math {
+  background: #ffffff;
+  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--slate-200);
+  font-size: 0.75rem;
+}
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 200;
+  background: var(--slate-900);
+  color: #ffffff;
+  padding: 0.65rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 0.8rem;
+  font-weight: 600;
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--slate-700);
+  animation: slideUp 0.25s ease;
+}
+
+.toast.hidden { display: none; }
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.font-bold { font-weight: 700; }
+.font-mono { font-family: var(--font-mono); }
+.text-highlight { color: #312e81; }
+
+/* =====================================================
+   PRINT MEDIA STYLES
+   ===================================================== */
+@media print {
+  .app-header, .btn, .stepper-row, .range-slider, .icon-btn, .modal-overlay, .toast {
+    display: none !important;
+  }
+  body, .main-container {
+    background: #fff;
+    color: #000;
+    max-width: 100%;
+    padding: 0;
+  }
+  .card {
+    border: 1px solid #ccc;
+    box-shadow: none;
+    page-break-inside: avoid;
+  }
+}
+
+</style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Toast Notification -->
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- Header Navigation -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="header-top">
+        <div class="brand">
+          <div class="brand-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/>
+              <path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/>
+              <path d="M7 21h10"/>
+              <path d="M12 3v18"/>
+              <path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>
+            </svg>
+          </div>
+          <div>
+            <div class="brand-title-wrap">
+              <h1 class="brand-title">Capital Structure Studio</h1>
+              <span class="badge-sub">EBITâ€“EPS & Leverage Lab</span>
+            </div>
+            <p class="brand-desc">Financial calculator, break-even indifference analyzer & educational studio</p>
+          </div>
+        </div>
+
+        <!-- Global Action Controls -->
+        <div class="header-actions">
+          <!-- Currency Picker -->
+          <div class="currency-group">
+            <span class="ctrl-label">Currency:</span>
+            <button type="button" class="curr-btn active" data-currency="INR">â‚¹ INR</button>
+            <button type="button" class="curr-btn" data-currency="USD">$ USD</button>
+            <button type="button" class="curr-btn" data-currency="EUR">â‚¬ EUR</button>
+            <button type="button" class="curr-btn" data-currency="GBP">Â£ GBP</button>
+          </div>
+
+          <!-- Case Preset Selector -->
+          <div class="select-wrapper">
+            <select id="preset-selector" class="preset-select">
+              <option value="" disabled selected>ðŸ“š Load Case Preset...</option>
+              <option value="classic">Standard Textbook (â‚¹10L Capital)</option>
+              <option value="preference">Expansion with Pref Shares (â‚¹20L)</option>
+              <option value="corporate">Corporate Mix (â‚¹50L Capital)</option>
+            </select>
+          </div>
+
+          <!-- Save Button -->
+          <button type="button" id="btn-save-scenario" class="btn btn-secondary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Save Scenario
+          </button>
+
+          <!-- Reset Button -->
+          <button type="button" id="btn-reset" class="btn btn-outline" title="Reset to default textbook case">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            Reset
+          </button>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="nav-tabs" id="nav-tabs">
+        <button class="nav-tab active" data-tab="tab-ebit-eps">
+          <span class="tab-icon">ðŸ“Š</span>
+          <span>EBITâ€“EPS Analysis</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-indifference">
+          <span class="tab-icon">âš–ï¸</span>
+          <span>Break-even / Indifference</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-compare">
+          <span class="tab-icon">ðŸ”„</span>
+          <span>Compare Financing Plans</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-sensitivity">
+          <span class="tab-icon">ðŸ“ˆ</span>
+          <span>Sensitivity Analysis</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-learning">
+          <span class="tab-icon">ðŸŽ“</span>
+          <span>Learning Lab & Formulas</span>
+          <span class="badge-mini">Guide</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-history">
+          <span class="tab-icon">ðŸ“œ</span>
+          <span>History & Scenarios</span>
+          <span id="history-count-badge" class="badge-count hidden">0</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-container">
+    <!-- ===================================================== -->
+    <!-- TAB 1: EBITâ€“EPS ANALYSIS -->
+    <!-- ===================================================== -->
+    <section id="tab-ebit-eps" class="tab-panel active">
+      <!-- Global Controls Card -->
+      <div class="card card-controls">
+        <div class="controls-grid">
+          <!-- EBIT Control -->
+          <div class="control-col">
+            <div class="control-header">
+              <label class="control-label" for="ebit-input">
+                <span class="label-icon">ðŸ’°</span> Expected Operating Profit (EBIT)
+              </label>
+              <span id="ebit-badge" class="val-badge font-mono">â‚¹2,00,000</span>
+            </div>
+            <div class="stepper-row">
+              <input type="number" id="ebit-input" class="form-input font-bold" min="0" step="5000" value="200000">
+              <div class="btn-group-step">
+                <button type="button" class="step-btn" data-delta="-50000">-50k</button>
+                <button type="button" class="step-btn" data-delta="-10000">-10k</button>
+                <button type="button" class="step-btn" data-delta="10000">+10k</button>
+                <button type="button" class="step-btn" data-delta="50000">+50k</button>
+              </div>
+            </div>
+            <input type="range" id="ebit-slider" class="range-slider" min="0" max="600000" step="5000" value="200000">
+            <div class="slider-ticks font-mono">
+              <span>0</span>
+              <span id="slider-mid">â‚¹3,00,000</span>
+              <span id="slider-max">â‚¹6,00,000</span>
+            </div>
+          </div>
+
+          <!-- Tax Rate Control -->
+          <div class="control-col bg-subtle">
+            <div class="control-header">
+              <label class="control-label" for="tax-input">
+                <span class="label-icon">ðŸ›ï¸</span> Corporate Tax Rate (T)
+              </label>
+              <span id="tax-badge" class="val-badge badge-green font-mono">35%</span>
+            </div>
+            <div class="stepper-row">
+              <div class="input-suffix-wrap">
+                <input type="number" id="tax-input" class="form-input font-bold" min="0" max="100" step="0.5" value="35">
+                <span class="input-suffix">%</span>
+              </div>
+              <div class="tax-presets">
+                <button type="button" class="tax-preset-btn" data-tax="25">25%</button>
+                <button type="button" class="tax-preset-btn" data-tax="30">30%</button>
+                <button type="button" class="tax-preset-btn active" data-tax="35">35%</button>
+                <button type="button" class="tax-preset-btn" data-tax="40">40%</button>
+              </div>
+            </div>
+            <p class="helper-text">
+              Tax rate provides interest tax shield: <span class="font-mono font-bold">(1 âˆ’ Tax Rate)</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Plans Header & Actions -->
+      <div class="section-toolbar">
+        <div>
+          <h2 class="section-title">Financing Alternatives (<span id="plans-count">3</span>)</h2>
+          <p class="section-subtitle">Customize capital structures to evaluate the impact of debt, interest, and equity dilution.</p>
+        </div>
+        <button type="button" id="btn-add-plan" class="btn btn-primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Alternative Plan
+        </button>
+      </div>
+
+      <!-- Plans Cards Grid -->
+      <div id="plans-cards-grid" class="cards-grid"></div>
+
+      <!-- Master Results Table -->
+      <div class="card table-card">
+        <div class="table-header">
+          <div>
+            <h3 class="card-title">ðŸ“‹ Financing Plans & EPS Calculation Table</h3>
+            <p class="card-desc">Compare earnings per share, interest cost, tax deductions, and leverage side by side.</p>
+          </div>
+          <div class="formula-chip font-mono">
+            EPS = [(EBIT âˆ’ I) Ã— (1 âˆ’ T) âˆ’ PD] Ã· N
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table class="data-table" id="master-plan-table">
+            <thead>
+              <tr>
+                <th>Financing Plan</th>
+                <th class="text-right">Total Capital</th>
+                <th class="text-right">EBIT</th>
+                <th class="text-right">Interest (I)</th>
+                <th class="text-right">Tax (T)</th>
+                <th class="text-right">Pref. Div (PD)</th>
+                <th class="text-right">Equity Shares (N)</th>
+                <th class="text-right font-bold text-highlight">EPS</th>
+                <th class="text-right">D/E Ratio</th>
+                <th class="text-right">Fin. Break-Even</th>
+                <th class="text-center">Step-by-Step</th>
+              </tr>
+            </thead>
+            <tbody id="master-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Interactive EBIT-EPS Chart Card -->
+      <div class="card chart-card">
+        <div class="chart-header">
+          <div>
+            <h3 class="card-title">ðŸ“Š Interactive EBITâ€“EPS Trajectory Graph</h3>
+            <p class="card-desc">Visualizes EPS slopes and indifference intersections across operating income levels.</p>
+          </div>
+          <div class="chart-legend-toggles">
+            <label class="checkbox-label">
+              <input type="checkbox" id="toggle-indiff-markers" checked>
+              <span>Indifference Points</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="toggle-bep-markers" checked>
+              <span>Break-even EBIT</span>
+            </label>
+          </div>
+        </div>
+        <div class="canvas-container">
+          <canvas id="ebitEpsCanvas" width="900" height="420"></canvas>
+          <div id="chart-tooltip" class="chart-tooltip hidden"></div>
+        </div>
+        <div class="chart-footer">
+          <div class="chart-annotation">
+            <span class="info-icon">â„¹ï¸</span>
+            <span><strong>Concept:</strong> Steeper lines represent higher financial leverage (fewer equity shares). Line slope = <span class="font-mono font-bold">(1 âˆ’ Tax) Ã· N</span>.</span>
+          </div>
+          <div class="legend-indicator-row font-medium">
+            <span class="legend-dot-item"><span class="dot dot-amber"></span> Indifference Intersection</span>
+            <span class="legend-dot-item"><span class="dot dot-indigo"></span> Current EBIT Marker</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================== -->
+    <!-- TAB 2: BREAK-EVEN EBIT / INDIFFERENCE POINT -->
+    <!-- ===================================================== -->
+    <section id="tab-indifference" class="tab-panel">
+      <!-- Banner -->
+      <div class="hero-banner">
+        <div class="hero-content">
+          <span class="hero-badge">âš–ï¸ EBITâ€“EPS Indifference Point Analyzer</span>
+          <h2 class="hero-title">Break-Even Operating Profit (Indifference Point)</h2>
+          <p class="hero-desc">
+            The EBIT level where two capital structure alternatives generate exactly equal Earnings Per Share (EPS). Above this point, financial leverage increases EPS. Below this point, debt interest decreases EPS.
+          </p>
+        </div>
+        <div class="hero-metric-card">
+          <span class="hero-metric-label">Current Expected EBIT</span>
+          <span id="indiff-current-ebit" class="hero-metric-val font-mono">â‚¹2,00,000</span>
+          <span id="indiff-current-tax" class="hero-metric-sub">Tax Rate: 35%</span>
+        </div>
+      </div>
+
+      <!-- Plan Pair Selectors -->
+      <div class="card selector-card">
+        <div class="pair-selector-row">
+          <div class="pair-col">
+            <label class="control-label" for="indiff-plan1-select">Financing Plan 1</label>
+            <select id="indiff-plan1-select" class="form-select font-bold"></select>
+          </div>
+          <div class="vs-circle">VS</div>
+          <div class="pair-col">
+            <label class="control-label" for="indiff-plan2-select">Financing Plan 2</label>
+            <select id="indiff-plan2-select" class="form-select font-bold"></select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Result Callout Block -->
+      <div id="indiff-result-container"></div>
+
+      <!-- Multi-Plan Indifference Matrix -->
+      <div class="card table-card" id="indiff-matrix-card">
+        <div class="table-header">
+          <div>
+            <h3 class="card-title">ðŸ§® Multi-Plan Indifference Matrix</h3>
+            <p class="card-desc">Break-even EBIT and indifference EPS across all pairwise combinations of your financing plans.</p>
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table class="data-table" id="indiff-matrix-table">
+            <thead>
+              <tr>
+                <th>Plan Pair</th>
+                <th class="text-right font-bold">Indifference EBIT</th>
+                <th class="text-right">Indifference EPS</th>
+                <th>Dominant Above Indifference</th>
+                <th>Dominant Below Indifference</th>
+              </tr>
+            </thead>
+            <tbody id="indiff-matrix-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================== -->
+    <!-- TAB 3: COMPARE FINANCING PLANS -->
+    <!-- ===================================================== -->
+    <section id="tab-compare" class="tab-panel">
+      <!-- Summary Bar -->
+      <div class="card summary-header-card">
+        <div>
+          <h2 class="section-title">ðŸ”„ Capital Structure Comparison Dashboard</h2>
+          <p class="section-subtitle">Evaluate capital allocation, financial risk profiles, and EPS generation across all structures.</p>
+        </div>
+        <div class="metric-pill-group">
+          <div class="metric-pill">
+            <span class="pill-label">Operating Profit (EBIT)</span>
+            <span id="compare-ebit-val" class="pill-val font-mono">â‚¹2,00,000</span>
+          </div>
+          <div class="metric-pill">
+            <span class="pill-label">Corporate Tax</span>
+            <span id="compare-tax-val" class="pill-val font-mono">35%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Visual Charts: Donut Charts + EPS Bar Chart -->
+      <div class="compare-charts-grid">
+        <!-- EPS Comparison Chart -->
+        <div class="card chart-box">
+          <div class="box-header">
+            <h3 class="card-title">ðŸ“Š EPS Comparison at Current EBIT</h3>
+            <p class="card-desc">Direct EPS comparison across all plans at selected EBIT</p>
+          </div>
+          <div class="canvas-wrap-small">
+            <canvas id="epsBarCanvas" width="450" height="260"></canvas>
+          </div>
+        </div>
+
+        <!-- Donut Charts: Capital Mix -->
+        <div class="card chart-box">
+          <div class="box-header">
+            <h3 class="card-title">ðŸ° Financing Structure Mix (Debt vs Equity vs Pref)</h3>
+            <div class="legend-chips">
+              <span class="legend-chip"><span class="chip-dot bg-blue"></span> Equity</span>
+              <span class="legend-chip"><span class="chip-dot bg-green"></span> Debt</span>
+              <span class="legend-chip"><span class="chip-dot bg-purple"></span> Preference</span>
+            </div>
+          </div>
+          <div id="donuts-container" class="donuts-grid"></div>
+        </div>
+      </div>
+
+      <!-- Detailed Statement Cards Grid -->
+      <div>
+        <h3 class="section-title mb-3">Detailed Financial Statement Cards</h3>
+        <div id="compare-statement-cards" class="statement-cards-grid"></div>
+      </div>
+    </section>
+
+    <!-- ===================================================== -->
+    <!-- TAB 4: SENSITIVITY ANALYSIS -->
+    <!-- ===================================================== -->
+    <section id="tab-sensitivity" class="tab-panel">
+      <div class="card controls-card">
+        <div class="section-toolbar mb-0">
+          <div>
+            <h2 class="section-title">ðŸ“ˆ EBIT Sensitivity Analysis</h2>
+            <p class="section-subtitle">Simulate EPS outcomes across various operating income scenarios to identify leverage inflection points.</p>
+          </div>
+          <div class="btn-group-presets">
+            <button type="button" id="btn-sens-default" class="btn btn-outline">Standard 50kâ€“150k</button>
+            <button type="button" id="btn-sens-100k" class="btn btn-outline">100kâ€“300k</button>
+            <button type="button" id="btn-sens-200k" class="btn btn-outline">200kâ€“600k</button>
+          </div>
+        </div>
+
+        <div class="add-point-bar">
+          <form id="form-add-sens-point" class="add-point-form">
+            <input type="number" id="input-new-sens" class="form-input" placeholder="Add custom EBIT (e.g. 175000)" min="0" step="5000">
+            <button type="submit" class="btn btn-primary">Add Point</button>
+          </form>
+          <div class="active-chips-wrap">
+            <span class="chips-label">Active Levels:</span>
+            <div id="sens-points-chips" class="chips-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sensitivity Table -->
+      <div class="card table-card">
+        <div class="table-header">
+          <h3 class="card-title">Sensitivity Results Table</h3>
+          <span class="helper-text">Highlighted: Best Performing Plan at each EBIT tier</span>
+        </div>
+        <div class="table-scroll">
+          <table class="data-table" id="sensitivity-table">
+            <thead id="sensitivity-thead"></thead>
+            <tbody id="sensitivity-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Sensitivity Multi-Line Chart -->
+      <div class="card chart-card">
+        <div class="chart-header">
+          <div>
+            <h3 class="card-title">ðŸ“ˆ EPS Sensitivity Trajectory Chart</h3>
+            <p class="card-desc">Compare how steeply EPS rises with higher EBIT across each financing choice.</p>
+          </div>
+        </div>
+        <div class="canvas-container">
+          <canvas id="sensitivityCanvas" width="900" height="340"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================== -->
+    <!-- TAB 5: LEARNING LAB & FORMULAS -->
+    <!-- ===================================================== -->
+    <section id="tab-learning" class="tab-panel">
+      <!-- Sub-tabs -->
+      <div class="sub-nav-tabs">
+        <button class="sub-tab active" data-sub="sub-guide">Concepts & Explanation</button>
+        <button class="sub-tab" data-sub="sub-formulas">Formula Cheat Sheet</button>
+        <button class="sub-tab" data-sub="sub-quiz">Interactive Knowledge Quiz</button>
+      </div>
+
+      <!-- Sub-panel 1: Educational Concepts -->
+      <div id="sub-guide" class="sub-panel active">
+        <div class="concept-card">
+          <div class="concept-header">
+            <span class="concept-icon">âš–ï¸</span>
+            <h3 class="concept-title">1. What is Capital Structure?</h3>
+          </div>
+          <p class="concept-text">
+            <strong>Capital Structure</strong> refers to the permanent long-term financing mix of a company, represented by the proportionate relationship between <strong>debt capital</strong>, <strong>common equity capital</strong>, and <strong>preference share capital</strong> used by a company to finance its operations and investments.
+          </p>
+          <div class="concept-columns">
+            <div class="mini-card bg-blue-subtle">
+              <strong class="text-blue">Common Equity</strong>
+              <p>Represents residual ownership. Equity shares carry no fixed obligation to pay dividends, but dilute earnings per share (EPS) and control.</p>
+            </div>
+            <div class="mini-card bg-green-subtle">
+              <strong class="text-green">Debt Capital</strong>
+              <p>Fixed-cost borrowing (bonds, debentures, loans). Interest is legally mandatory regardless of profit, but is tax-deductible and avoids equity dilution.</p>
+            </div>
+            <div class="mini-card bg-purple-subtle">
+              <strong class="text-purple">Preference Capital</strong>
+              <p>Hybrid security with a fixed dividend rate payable after corporate tax but before common equity distributions.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-header">
+            <span class="concept-icon">ðŸ“ˆ</span>
+            <h3 class="concept-title">2. What is EBITâ€“EPS Analysis?</h3>
+          </div>
+          <p class="concept-text">
+            <strong>EBITâ€“EPS Analysis</strong> is a vital financial planning technique that investigates how alternative financing options affect a company's <strong>Earnings Per Share (EPS)</strong> across different levels of <strong>Earnings Before Interest and Taxes (EBIT)</strong>.
+          </p>
+          <p class="concept-text">
+            Because interest is a fixed financial charge, employing debt causes EPS to fluctuate more widely than EBIT. EBITâ€“EPS analysis charts these relationships to determine which financing plan maximizes shareholder wealth under expected operating performance.
+          </p>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-header">
+            <span class="concept-icon">ðŸŽ¯</span>
+            <h3 class="concept-title">3. What is Break-even EBIT / Indifference Point?</h3>
+          </div>
+          <p class="concept-text">
+            The <strong>EBIT Indifference Point</strong> is the specific operating profit level where the <strong>EPS generated by Plan 1 equals the EPS generated by Plan 2</strong>.
+          </p>
+          <div class="decision-box">
+            <strong>The Golden Decision Rule:</strong>
+            <ul>
+              <li><strong>If Expected EBIT &gt; Indifference EBIT:</strong> The financing plan with <em>higher debt / higher financial leverage</em> is superior because the return on capital exceeds debt cost, boosting EPS ("Trading on Equity").</li>
+              <li><strong>If Expected EBIT &lt; Indifference EBIT:</strong> The financing plan with <em>lower debt / higher equity</em> is superior, as the burden of fixed interest reduces earnings per share.</li>
+              <li><strong>If Expected EBIT = Indifference EBIT:</strong> Both plans produce the identical EPS.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-header">
+            <span class="concept-icon">ðŸ’¡</span>
+            <h3 class="concept-title">4. Why is EBITâ€“EPS Analysis Used?</h3>
+          </div>
+          <p class="concept-text">
+            EBITâ€“EPS analysis enables finance executives, investors, and students to evaluate the interconnected trade-offs in corporate capital budgeting:
+          </p>
+          <div class="tradeoff-grid">
+            <div class="tradeoff-item">
+              <strong>ðŸ“ˆ Operating Profit Sensitivity</strong>
+              <p>See how small percentage shifts in EBIT trigger magnified shifts in EPS.</p>
+            </div>
+            <div class="tradeoff-item">
+              <strong>ðŸ›¡ï¸ Interest Tax Shield</strong>
+              <p>Quantify the corporate tax saved by debt: Interest Ã— Tax Rate.</p>
+            </div>
+            <div class="tradeoff-item">
+              <strong>âš¡ Trading on Equity</strong>
+              <p>Use fixed-cost debt to augment common shareholders' rate of return.</p>
+            </div>
+            <div class="tradeoff-item">
+              <strong>âš–ï¸ Financial Risk Assessment</strong>
+              <p>Identify the risk of bankruptcy if EBIT falls below financial break-even.</p>
+            </div>
+            <div class="tradeoff-item">
+              <strong>ðŸ‘¥ Equity Dilution</strong>
+              <p>Weigh issuing more shares (diluting EPS) vs taking on fixed debt interest.</p>
+            </div>
+            <div class="tradeoff-item">
+              <strong>ðŸŽ¯ Optimal Leverage Choice</strong>
+              <p>Select the debt-equity ratio that maximizes EPS at target EBIT.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sub-panel 2: Formula Cheat Sheet -->
+      <div id="sub-formulas" class="sub-panel">
+        <div class="formula-card">
+          <span class="formula-tag">Formula 1: Earnings Per Share (EPS)</span>
+          <div class="formula-math font-mono">
+            EPS = [(EBIT âˆ’ Interest) Ã— (1 âˆ’ Tax Rate) âˆ’ Preference Dividend] Ã· Number of Equity Shares
+          </div>
+          <ul class="formula-variables">
+            <li><strong>EBIT:</strong> Earnings Before Interest and Taxes (Operating Profit)</li>
+            <li><strong>Interest:</strong> Debt Amount Ã— Interest Rate %</li>
+            <li><strong>(1 âˆ’ Tax Rate):</strong> Tax retention multiplier</li>
+            <li><strong>Preference Dividend:</strong> Preference Capital Ã— Dividend Rate %</li>
+            <li><strong>Number of Shares (N):</strong> Equity Capital Ã· Issue Price per Share</li>
+          </ul>
+        </div>
+
+        <div class="formula-card">
+          <span class="formula-tag tag-amber">Formula 2: EBITâ€“EPS Indifference Point (EBIT*)</span>
+          <div class="formula-math font-mono">
+            EBIT* = { Nâ‚‚ Ã— [Iâ‚(1âˆ’T) + PDâ‚] âˆ’ Nâ‚ Ã— [Iâ‚‚(1âˆ’T) + PDâ‚‚] } Ã· [ (Nâ‚‚ âˆ’ Nâ‚) Ã— (1 âˆ’ T) ]
+          </div>
+          <ul class="formula-variables">
+            <li><strong>Nâ‚, Nâ‚‚:</strong> Equity shares in Plan 1 and Plan 2</li>
+            <li><strong>Iâ‚, Iâ‚‚:</strong> Annual interest in Plan 1 and Plan 2</li>
+            <li><strong>PDâ‚, PDâ‚‚:</strong> Preference dividends in Plan 1 and Plan 2</li>
+            <li><strong>Note:</strong> If Nâ‚ = Nâ‚‚, lines are parallel and no indifference point exists!</li>
+          </ul>
+        </div>
+
+        <div class="formula-card">
+          <span class="formula-tag tag-green">Formula 3: Financial Break-Even EBIT (where EPS = 0)</span>
+          <div class="formula-math font-mono">
+            EBIT_BE = Interest + [ Preference Dividend Ã· (1 âˆ’ Tax Rate) ]
+          </div>
+          <ul class="formula-variables">
+            <li>Represents the minimum operating profit required to cover fixed financial charges.</li>
+            <li>For an all-equity firm (Interest = 0, PD = 0), Financial Break-Even EBIT is â‚¹0.</li>
+          </ul>
+        </div>
+
+        <div class="formula-card">
+          <span class="formula-tag tag-purple">Formula 4: Degree of Financial Leverage (DFL)</span>
+          <div class="formula-math font-mono">
+            DFL = EBIT Ã· [ EBIT âˆ’ Interest âˆ’ (Preference Dividend Ã· (1 âˆ’ Tax Rate)) ]
+          </div>
+          <ul class="formula-variables">
+            <li>Measures percentage change in EPS resulting from a 1% change in EBIT.</li>
+            <li>Higher DFL means higher financial risk and steeper EBIT-EPS trajectory slope.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Sub-panel 3: Interactive Quiz -->
+      <div id="sub-quiz" class="sub-panel">
+        <div class="card p-5">
+          <div class="quiz-header">
+            <div>
+              <h3 class="card-title">ðŸ† Capital Structure Knowledge Quiz</h3>
+              <p class="card-desc">Test your understanding of EBITâ€“EPS analysis, leverage, and indifference points.</p>
+            </div>
+            <div id="quiz-score-badge" class="quiz-score-badge hidden">Score: 0 / 5</div>
+          </div>
+
+          <div id="quiz-questions-list" class="quiz-questions-list"></div>
+
+          <div class="quiz-footer">
+            <button type="button" id="btn-submit-quiz" class="btn btn-primary">Submit Answers & Check Score</button>
+            <button type="button" id="btn-reset-quiz" class="btn btn-outline hidden">Retry Quiz</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================== -->
+    <!-- TAB 6: HISTORY & SCENARIOS -->
+    <!-- ===================================================== -->
+    <section id="tab-history" class="tab-panel">
+      <div class="card p-5">
+        <div class="section-toolbar mb-0">
+          <div>
+            <h2 class="section-title">ðŸ“œ Calculation History & Saved Scenarios</h2>
+            <p class="section-subtitle">Revisit, restore, and analyze previously saved capital structure evaluations.</p>
+          </div>
+          <div class="history-actions">
+            <button type="button" id="btn-export-csv" class="btn btn-secondary">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Export CSV
+            </button>
+            <button type="button" id="btn-print-report" class="btn btn-secondary">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              Print Report
+            </button>
+            <button type="button" id="btn-clear-history" class="btn btn-danger">Clear All</button>
+          </div>
+        </div>
+
+        <div id="history-items-container" class="history-items-container"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===================================================== -->
+  <!-- MODAL: ADD / EDIT PLAN -->
+  <!-- ===================================================== -->
+  <div id="modal-plan" class="modal-overlay hidden">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div>
+          <h3 id="modal-plan-title" class="modal-title">Add New Financing Plan</h3>
+          <p class="modal-desc">Configure debt, equity shares, and preference capital specifications.</p>
+        </div>
+        <button type="button" class="modal-close" id="btn-close-plan-modal">&times;</button>
+      </div>
+
+      <form id="form-plan" class="modal-body">
+        <input type="hidden" id="plan-id">
+
+        <!-- Plan Name & Color -->
+        <div class="form-row">
+          <div class="form-group flex-2">
+            <label class="form-label" for="plan-name">Plan Name <span class="text-danger">*</span></label>
+            <input type="text" id="plan-name" class="form-input" placeholder="e.g. Plan B: 50% Debt" required>
+          </div>
+          <div class="form-group flex-1">
+            <label class="form-label">Color Theme</label>
+            <div id="color-palette-picker" class="palette-picker"></div>
+            <input type="hidden" id="plan-color" value="#3b82f6">
+          </div>
+        </div>
+
+        <!-- Section 1: Equity Financing -->
+        <div class="form-box bg-blue-subtle">
+          <div class="box-title text-blue">ðŸ›ï¸ Common Equity Financing</div>
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label class="form-label" for="plan-equity-amt">Equity Capital (<span class="curr-sym">â‚¹</span>)</label>
+              <input type="number" id="plan-equity-amt" class="form-input" min="0" step="1000" value="500000">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="plan-share-price">Share Price (<span class="curr-sym">â‚¹</span>)</label>
+              <input type="number" id="plan-share-price" class="form-input" min="1" step="1" value="10">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="plan-shares-cnt">Number of Shares (N) <span class="text-danger">*</span></label>
+              <input type="number" id="plan-shares-cnt" class="form-input font-bold" min="1" step="1" value="50000" required>
+            </div>
+          </div>
+          <p class="form-hint">Number of shares is auto-calculated from Equity Ã· Share Price, or you can type it directly.</p>
+        </div>
+
+        <!-- Section 2: Debt Financing -->
+        <div class="form-box bg-green-subtle">
+          <div class="box-title text-green">ðŸ’³ Debt Financing & Interest</div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label" for="plan-debt-amt">Debt / Debentures (<span class="curr-sym">â‚¹</span>)</label>
+              <input type="number" id="plan-debt-amt" class="form-input" min="0" step="1000" value="500000">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="plan-interest-rate">Interest Rate (%)</label>
+              <input type="number" id="plan-interest-rate" class="form-input" min="0" max="100" step="0.1" value="10">
+            </div>
+          </div>
+          <div class="calc-preview text-green">
+            <span>Annual Interest Expense (I):</span>
+            <span id="plan-interest-preview" class="font-mono font-bold">â‚¹50,000</span>
+          </div>
+        </div>
+
+        <!-- Section 3: Preference Shares -->
+        <div class="form-box bg-purple-subtle">
+          <div class="box-title text-purple">â­ Preference Share Capital (Optional)</div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label" for="plan-pref-amt">Preference Capital (<span class="curr-sym">â‚¹</span>)</label>
+              <input type="number" id="plan-pref-amt" class="form-input" min="0" step="1000" value="0">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="plan-pref-rate">Dividend Rate (%)</label>
+              <input type="number" id="plan-pref-rate" class="form-input" min="0" max="100" step="0.1" value="9">
+            </div>
+          </div>
+          <div class="calc-preview text-purple" id="plan-pref-preview-row">
+            <span>Annual Preference Dividend (PD):</span>
+            <span id="plan-pref-preview" class="font-mono font-bold">â‚¹0</span>
+          </div>
+        </div>
+
+        <!-- Total Capital Summary -->
+        <div class="total-capital-bar">
+          <span>Total Capital Raised:</span>
+          <span id="plan-total-preview" class="font-mono font-bold">â‚¹10,00,000</span>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="btn-cancel-plan">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btn-save-plan">Save Plan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================================================== -->
+  <!-- MODAL: STEP-BY-STEP BREAKDOWN -->
+  <!-- ===================================================== -->
+  <div id="modal-step" class="modal-overlay hidden">
+    <div class="modal-dialog modal-dialog-lg">
+      <div class="modal-header header-gradient">
+        <div>
+          <div class="flex-row items-center gap-2">
+            <h3 id="step-modal-title" class="modal-title text-white">Plan Calculation Process</h3>
+            <span class="step-tag">Step-by-Step Breakdown</span>
+          </div>
+          <p class="modal-desc text-white-80">Detailed mathematical evaluation of operating profit, taxes, leverage, and EPS.</p>
+        </div>
+        <button type="button" class="modal-close text-white" id="btn-close-step-modal">&times;</button>
+      </div>
+
+      <div class="modal-body" id="step-modal-body"></div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="btn-done-step">Close Breakdown</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- App Script -->
+  <script>
+/**
+ * CAPITAL STRUCTURE STUDIO - STANDALONE JAVASCRIPT APPLICATION
+ * High-precision financial calculations, interactive charts, and educational modules.
+ */
+
+(function () {
+  'use strict';
+
+  // --- 1. CONSTANTS & PALETTE ---
+  const COLOR_PALETTE = ['#3b82f6', '#10b981', '#8b5cf6', '#f59e0b', '#ef4444', '#06b6d4'];
+
+  const CURRENCIES = {
+    INR: { code: 'INR', symbol: 'â‚¹', locale: 'en-IN' },
+    USD: { code: 'USD', symbol: '$', locale: 'en-US' },
+    EUR: { code: 'EUR', symbol: 'â‚¬', locale: 'de-DE' },
+    GBP: { code: 'GBP', symbol: 'Â£', locale: 'en-GB' },
+  };
+
+  const PRESETS = {
+    classic: {
+      name: 'Textbook Classic (â‚¹10 Lakhs Capital)',
+      ebit: 200000,
+      taxRate: 35,
+      plans: [
+        { id: 'p1', name: 'Plan A: All Equity', color: '#3b82f6', debtAmount: 0, interestRate: 0, equityAmount: 1000000, sharePrice: 10, numberOfShares: 100000, preferenceCapital: 0, preferenceDividendRate: 0 },
+        { id: 'p2', name: 'Plan B: 50% Debt / 50% Equity', color: '#10b981', debtAmount: 500000, interestRate: 10, equityAmount: 500000, sharePrice: 10, numberOfShares: 50000, preferenceCapital: 0, preferenceDividendRate: 0 },
+        { id: 'p3', name: 'Plan C: 80% Debt (High Leverage)', color: '#f59e0b', debtAmount: 800000, interestRate: 12, equityAmount: 200000, sharePrice: 10, numberOfShares: 20000, preferenceCapital: 0, preferenceDividendRate: 0 }
+      ]
+    },
+    preference: {
+      name: 'Expansion with Preference Capital (â‚¹20 Lakhs)',
+      ebit: 400000,
+      taxRate: 30,
+      plans: [
+        { id: 'pref1', name: 'Option 1: Pure Equity', color: '#3b82f6', debtAmount: 0, interestRate: 0, equityAmount: 2000000, sharePrice: 10, numberOfShares: 200000, preferenceCapital: 0, preferenceDividendRate: 0 },
+        { id: 'pref2', name: 'Option 2: Debt + Equity', color: '#10b981', debtAmount: 1000000, interestRate: 10, equityAmount: 1000000, sharePrice: 10, numberOfShares: 100000, preferenceCapital: 0, preferenceDividendRate: 0 },
+        { id: 'pref3', name: 'Option 3: Debt + Pref + Equity', color: '#8b5cf6', debtAmount: 600000, interestRate: 10, equityAmount: 1000000, sharePrice: 10, numberOfShares: 100000, preferenceCapital: 400000, preferenceDividendRate: 9 }
+      ]
+    },
+    corporate: {
+      name: 'Corporate Capital Mix (â‚¹50 Lakhs)',
+      ebit: 1000000,
+      taxRate: 25,
+      plans: [
+        { id: 'corp1', name: 'Conservative Structure', color: '#06b6d4', debtAmount: 1000000, interestRate: 8.5, equityAmount: 4000000, sharePrice: 100, numberOfShares: 40000, preferenceCapital: 0, preferenceDividendRate: 0 },
+        { id: 'corp2', name: 'Balanced Structure', color: '#3b82f6', debtAmount: 2000000, interestRate: 9.5, equityAmount: 3000000, sharePrice: 100, numberOfShares: 30000, preferenceCapital: 0, preferenceDividendRate: 0 },
+        { id: 'corp3', name: 'Aggressive Leveraged', color: '#ef4444', debtAmount: 3250000, interestRate: 11, equityAmount: 1750000, sharePrice: 100, numberOfShares: 17500, preferenceCapital: 0, preferenceDividendRate: 0 }
+      ]
+    }
+  };
+
+  const QUIZ_DATA = [
+    {
+      id: 1,
+      q: 'What does the EBITâ€“EPS Indifference Point represent in capital structure analysis?',
+      opts: [
+        'The EBIT level where company sales equal total operating costs',
+        'The EBIT level where two alternative financing plans produce the exact same EPS',
+        'The point where debt equals total equity in the balance sheet',
+        'The minimum EBIT required to avoid bankruptcy'
+      ],
+      ans: 1,
+      exp: 'The indifference point is the EBIT level at which Earnings Per Share (EPS) under two capital structure alternatives are completely equal.'
+    },
+    {
+      id: 2,
+      q: 'If expected EBIT is HIGHER than the indifference point, which financing alternative is generally preferred?',
+      opts: [
+        'Pure equity financing because it has zero debt',
+        'The plan with higher financial leverage (higher debt / fewer shares)',
+        'Government subsidy',
+        'Both plans are equally profitable'
+      ],
+      ans: 1,
+      exp: 'When EBIT exceeds the indifference point, operating returns exceed the cost of debt, creating financial leverage surplus that accrues to equity shareholders ("Trading on Equity").'
+    },
+    {
+      id: 3,
+      q: 'Why does corporate tax make debt financing advantageous?',
+      opts: [
+        'Debt holders pay taxes on behalf of the company',
+        'Interest expense is tax-deductible, creating an interest tax shield',
+        'Equity dividends are tax-deductible',
+        'Debt is completely free of risk'
+      ],
+      ans: 1,
+      exp: 'Interest is deducted before calculating taxable profit, saving the company (Interest Ã— Tax Rate) in taxes.'
+    },
+    {
+      id: 4,
+      q: 'What happens if two financing plans have the exact same number of equity shares?',
+      opts: [
+        'Their EBIT-EPS lines intersect at EBIT = 0',
+        'Their lines are parallel and never intersect (no indifference point exists)',
+        'They produce a single curved line',
+        'They cross at infinity'
+      ],
+      ans: 1,
+      exp: 'The slope of an EBIT-EPS line is (1 âˆ’ T) Ã· N. Equal shares (N) mean identical slopes, making the lines parallel.'
+    },
+    {
+      id: 5,
+      q: 'What is the Financial Break-Even Point of a firm?',
+      opts: [
+        'The sales volume where EBIT is zero',
+        'The level of EBIT where Earnings Per Share (EPS) equals exactly zero',
+        'The point where debt is repaid in full',
+        'The book value of common shares'
+      ],
+      ans: 1,
+      exp: 'Financial Break-Even EBIT is the operating profit required just to cover fixed interest and preference dividends, leaving EPS = 0.'
+    }
+  ];
+
+  // --- 2. APPLICATION STATE ---
+  let state = {
+    currency: 'INR',
+    ebit: 200000,
+    taxRate: 35,
+    plans: JSON.parse(JSON.stringify(PRESETS.classic.plans)),
+    sensPoints: [50000, 75000, 100000, 125000, 150000],
+    history: [],
+    editingPlanId: null,
+    selectedPlanColor: COLOR_PALETTE[0],
+    showIndiffMarkers: true,
+    showBepMarkers: true,
+    quizAnswers: {},
+    quizSubmitted: false
+  };
+
+  // Load from LocalStorage if available
+  try {
+    const saved = localStorage.getItem('cap_struct_standalone_state');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed.plans && parsed.plans.length > 0) state.plans = parsed.plans;
+      if (parsed.ebit) state.ebit = parsed.ebit;
+      if (parsed.taxRate) state.taxRate = parsed.taxRate;
+      if (parsed.currency) state.currency = parsed.currency;
+      if (parsed.history) state.history = parsed.history;
+    }
+  } catch (e) {
+    console.warn('Storage read fallback', e);
+  }
+
+  function persistState() {
+    try {
+      localStorage.setItem('cap_struct_standalone_state', JSON.stringify({
+        currency: state.currency,
+        ebit: state.ebit,
+        taxRate: state.taxRate,
+        plans: state.plans,
+        history: state.history
+      }));
+    } catch (e) {
+      console.warn('Storage write fallback', e);
+    }
+  }
+
+  // --- 3. FORMATTING UTILITIES ---
+  function formatCurrency(val, showDec = true) {
+    if (val === null || val === undefined || isNaN(val)) return `${CURRENCIES[state.currency].symbol}0.00`;
+    const cfg = CURRENCIES[state.currency];
+    try {
+      return `${cfg.symbol}${new Intl.NumberFormat(cfg.locale, {
+        minimumFractionDigits: showDec ? 2 : 0,
+        maximumFractionDigits: showDec ? 2 : 0,
+      }).format(val)}`;
+    } catch {
+      return `${cfg.symbol}${Number(val).toFixed(showDec ? 2 : 0)}`;
+    }
+  }
+
+  function formatCompactCurrency(val) {
+    if (isNaN(val)) return '0';
+    const sym = CURRENCIES[state.currency].symbol;
+    const abs = Math.abs(val);
+    const sign = val < 0 ? '-' : '';
+
+    if (state.currency === 'INR') {
+      if (abs >= 10000000) return `${sign}${sym}${(abs / 10000000).toFixed(1)} Cr`;
+      if (abs >= 100000) return `${sign}${sym}${(abs / 100000).toFixed(1)} L`;
+      if (abs >= 1000) return `${sign}${sym}${(abs / 1000).toFixed(0)}k`;
+      return `${sign}${sym}${abs.toFixed(0)}`;
+    }
+    if (abs >= 1000000) return `${sign}${sym}${(abs / 1000000).toFixed(1)}M`;
+    if (abs >= 1000) return `${sign}${sym}${(abs / 1000).toFixed(0)}k`;
+    return `${sign}${sym}${abs.toFixed(0)}`;
+  }
+
+  function formatPercent(val, dec = 1) {
+    if (val === null || val === undefined || isNaN(val)) return '0%';
+    return `${Number(val).toFixed(dec)}%`;
+  }
+
+  function formatShares(val) {
+    if (isNaN(val)) return '0';
+    return new Intl.NumberFormat(CURRENCIES[state.currency].locale, { maximumFractionDigits: 0 }).format(Math.round(val));
+  }
+
+  function showToast(msg) {
+    const el = document.getElementById('toast');
+    if (!el) return;
+    el.textContent = msg;
+    el.classList.remove('hidden');
+    setTimeout(() => {
+      el.classList.add('hidden');
+    }, 3500);
+  }
+
+  // --- 4. FINANCIAL MATH LOGIC ---
+  function getPlanMetrics(plan, ebit, taxRatePercent) {
+    const taxRate = Math.max(0, Math.min(100, taxRatePercent)) / 100;
+    const interest = plan.directInterest || (plan.debtAmount * plan.interestRate) / 100;
+    const prefDiv = plan.directPreferenceDividend || (plan.preferenceCapital * plan.preferenceDividendRate) / 100;
+    const shares = plan.numberOfShares > 0 ? plan.numberOfShares : (plan.equityAmount / (plan.sharePrice || 10));
+
+    const ebt = ebit - interest;
+    const taxAmount = ebt * taxRate;
+    const pat = ebt - taxAmount;
+    const earningsForEquity = pat - prefDiv;
+    const eps = earningsForEquity / shares;
+
+    const totalCapital = plan.debtAmount + plan.equityAmount + plan.preferenceCapital;
+    const debtRatio = totalCapital > 0 ? (plan.debtAmount / totalCapital) * 100 : 0;
+    const equityRatio = totalCapital > 0 ? (plan.equityAmount / totalCapital) * 100 : 0;
+    const preferenceRatio = totalCapital > 0 ? (plan.preferenceCapital / totalCapital) * 100 : 0;
+    const debtEquityRatio = plan.equityAmount > 0 ? plan.debtAmount / plan.equityAmount : 0;
+
+    const t = 1 - taxRate;
+    const financialBreakEvenEbit = t > 0 ? interest + prefDiv / t : interest + prefDiv;
+    const dflDenom = ebit - financialBreakEvenEbit;
+    const dfl = Math.abs(dflDenom) > 0.0001 ? ebit / dflDenom : null;
+    const icr = interest > 0 ? ebit / interest : null;
+
+    return {
+      planId: plan.id,
+      planName: plan.name,
+      color: plan.color,
+      totalCapital,
+      debtAmount: plan.debtAmount,
+      equityAmount: plan.equityAmount,
+      preferenceCapital: plan.preferenceCapital,
+      debtRatio,
+      equityRatio,
+      preferenceRatio,
+      debtEquityRatio,
+      ebit,
+      interestExpense: interest,
+      ebt,
+      taxRate: taxRatePercent,
+      taxAmount,
+      pat,
+      preferenceDividend: prefDiv,
+      earningsForEquity,
+      numberOfShares: shares,
+      eps,
+      financialBreakEvenEbit,
+      degreeOfFinancialLeverage: dfl,
+      interestCoverageRatio: icr
+    };
+  }
+
+  function calculateIndifference(plan1, plan2, taxRatePercent) {
+    const taxRate = Math.max(0, Math.min(100, taxRatePercent)) / 100;
+    const t = 1 - taxRate;
+
+    const I1 = plan1.directInterest || (plan1.debtAmount * plan1.interestRate) / 100;
+    const I2 = plan2.directInterest || (plan2.debtAmount * plan2.interestRate) / 100;
+    const PD1 = plan1.directPreferenceDividend || (plan1.preferenceCapital * plan1.preferenceDividendRate) / 100;
+    const PD2 = plan2.directPreferenceDividend || (plan2.preferenceCapital * plan2.preferenceDividendRate) / 100;
+    const N1 = plan1.numberOfShares || (plan1.equityAmount / (plan1.sharePrice || 10));
+    const N2 = plan2.numberOfShares || (plan2.equityAmount / (plan2.sharePrice || 10));
+
+    if (Math.abs(N1 - N2) < 0.0001) {
+      return { isParallel: true, hasPoint: false, ebit: null, eps: null, plan1, plan2 };
+    }
+
+    const burden1 = I1 * t + PD1;
+    const burden2 = I2 * t + PD2;
+    const num = N2 * burden1 - N1 * burden2;
+    const den = (N2 - N1) * t;
+
+    if (Math.abs(den) < 0.00001) {
+      return { isParallel: false, hasPoint: false, ebit: null, eps: null, plan1, plan2 };
+    }
+
+    const indiffEbit = num / den;
+    const indiffEps = ((indiffEbit - I1) * t - PD1) / N1;
+
+    const steeperPlan = N1 < N2 ? plan1 : plan2;
+    const flatterPlan = N1 < N2 ? plan2 : plan1;
+
+    return {
+      isParallel: false,
+      hasPoint: true,
+      ebit: indiffEbit,
+      eps: indiffEps,
+      plan1,
+      plan2,
+      steeperPlan,
+      flatterPlan
+    };
+  }
+
+  // --- 5. RENDER FUNCTIONS ---
+  function renderAll() {
+    renderGlobalBadges();
+    renderPlanCards();
+    renderMasterTable();
+    drawEbitEpsChart();
+    renderIndifferenceView();
+    renderCompareView();
+    renderSensitivityView();
+    renderQuiz();
+    renderHistory();
+    persistState();
+  }
+
+  function renderGlobalBadges() {
+    document.getElementById('ebit-badge').textContent = formatCurrency(state.ebit, false);
+    document.getElementById('tax-badge').textContent = `${state.taxRate}%`;
+    document.getElementById('plans-count').textContent = state.plans.length;
+    document.getElementById('slider-max').textContent = formatCurrency(Math.max(500000, state.ebit * 2), false);
+    document.getElementById('slider-mid').textContent = formatCurrency(Math.max(500000, state.ebit * 2) / 2, false);
+
+    // Update active currency button
+    document.querySelectorAll('.curr-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.getAttribute('data-currency') === state.currency);
+    });
+
+    // Update currency symbols in labels
+    document.querySelectorAll('.curr-sym').forEach(el => {
+      el.textContent = CURRENCIES[state.currency].symbol;
+    });
+  }
+
+  function renderPlanCards() {
+    const grid = document.getElementById('plans-cards-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    const results = state.plans.map(p => getPlanMetrics(p, state.ebit, state.taxRate));
+    const maxEps = Math.max(...results.map(r => r.eps));
+
+    results.forEach(r => {
+      const isTop = r.eps === maxEps && results.length > 1 && maxEps > 0;
+      const card = document.createElement('div');
+      card.className = `plan-card ${isTop ? 'highlight-best' : ''}`;
+
+      card.innerHTML = `
+        <div class="card-color-stripe" style="background-color: ${r.color};"></div>
+        <div class="plan-card-body">
+          <div class="plan-card-head">
+            <div>
+              <div class="plan-card-title">${r.planName}</div>
+              <div class="plan-card-sub">Total Capital: ${formatCurrency(r.totalCapital, false)}</div>
+            </div>
+            <div class="plan-actions-group">
+              <button class="icon-btn edit-plan" data-id="${r.planId}" title="Edit Plan">âœï¸</button>
+              <button class="icon-btn duplicate-plan" data-id="${r.planId}" title="Duplicate">ðŸ“‹</button>
+              <button class="icon-btn danger delete-plan" data-id="${r.planId}" title="Delete">ðŸ—‘ï¸</button>
+            </div>
+          </div>
+
+          <div class="ratio-stack-wrap">
+            <div class="ratio-stack-bar">
+              <div class="ratio-seg" style="width: ${r.equityRatio}%; background: var(--blue);" title="Equity: ${r.equityRatio.toFixed(0)}%"></div>
+              <div class="ratio-seg" style="width: ${r.debtRatio}%; background: var(--success);" title="Debt: ${r.debtRatio.toFixed(0)}%"></div>
+              ${r.preferenceRatio > 0 ? `<div class="ratio-seg" style="width: ${r.preferenceRatio}%; background: var(--purple);" title="Pref: ${r.preferenceRatio.toFixed(0)}%"></div>` : ''}
+            </div>
+            <div class="ratio-labels">
+              <span style="color: var(--blue);">Eq: ${r.equityRatio.toFixed(0)}%</span>
+              <span style="color: var(--success);">Debt: ${r.debtRatio.toFixed(0)}%</span>
+              ${r.preferenceRatio > 0 ? `<span style="color: var(--purple);">Pref: ${r.preferenceRatio.toFixed(0)}%</span>` : ''}
+            </div>
+          </div>
+
+          <div class="ratio-grid">
+            <div class="ratio-box">
+              <span class="ratio-box-label">Equity Shares (N)</span>
+              <span class="ratio-box-val font-mono">${formatShares(r.numberOfShares)}</span>
+            </div>
+            <div class="ratio-box">
+              <span class="ratio-box-label">Annual Interest (I)</span>
+              <span class="ratio-box-val font-mono">${formatCurrency(r.interestExpense, false)}</span>
+            </div>
+          </div>
+
+          <div class="card-eps-box ${isTop ? 'highlight' : ''}">
+            <div>
+              <span class="eps-label">EPS at Current EBIT</span>
+              <span class="eps-val font-mono">${formatCurrency(r.eps)}</span>
+            </div>
+            ${isTop ? '<span class="best-badge">â˜… Highest EPS</span>' : ''}
+          </div>
+        </div>
+        <div class="plan-card-footer">
+          <span>Break-Even EBIT: <strong>${formatCurrency(r.financialBreakEvenEbit, false)}</strong></span>
+          <button type="button" class="link-btn view-steps-btn" data-id="${r.planId}">Formula Steps &rarr;</button>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+
+    // Attach card event handlers
+    grid.querySelectorAll('.edit-plan').forEach(btn => {
+      btn.addEventListener('click', () => openPlanModal(btn.getAttribute('data-id')));
+    });
+    grid.querySelectorAll('.duplicate-plan').forEach(btn => {
+      btn.addEventListener('click', () => duplicatePlan(btn.getAttribute('data-id')));
+    });
+    grid.querySelectorAll('.delete-plan').forEach(btn => {
+      btn.addEventListener('click', () => deletePlan(btn.getAttribute('data-id')));
+    });
+    grid.querySelectorAll('.view-steps-btn').forEach(btn => {
+      btn.addEventListener('click', () => openStepModal(btn.getAttribute('data-id')));
+    });
+  }
+
+  function renderMasterTable() {
+    const tbody = document.getElementById('master-table-body');
+    if (!tbody) return;
+    tbody.innerHTML = '';
+
+    const results = state.plans.map(p => getPlanMetrics(p, state.ebit, state.taxRate));
+    const maxEps = Math.max(...results.map(r => r.eps));
+
+    results.forEach(r => {
+      const isTop = r.eps === maxEps && results.length > 1 && maxEps > 0;
+      const tr = document.createElement('tr');
+      if (isTop) tr.className = 'row-best';
+
+      tr.innerHTML = `
+        <td>
+          <div class="plan-cell-wrap">
+            <span class="cell-dot" style="background-color: ${r.color};"></span>
+            <div>
+              <strong>${r.planName}</strong>
+              <div style="font-size: 0.65rem; color: var(--slate-400);">Debt: ${r.debtRatio.toFixed(0)}% | Eq: ${r.equityRatio.toFixed(0)}%</div>
+            </div>
+          </div>
+        </td>
+        <td class="text-right font-mono">${formatCurrency(r.totalCapital, false)}</td>
+        <td class="text-right font-mono font-bold">${formatCurrency(r.ebit, false)}</td>
+        <td class="text-right font-mono">${formatCurrency(r.interestExpense)}</td>
+        <td class="text-right font-mono">${formatPercent(r.taxRate, 0)} <span style="font-size: 0.65rem; color: var(--slate-400);">(${formatCurrency(r.taxAmount, false)})</span></td>
+        <td class="text-right font-mono">${r.preferenceDividend > 0 ? formatCurrency(r.preferenceDividend) : 'â€”'}</td>
+        <td class="text-right font-mono">${formatShares(r.numberOfShares)}</td>
+        <td class="text-right font-mono">
+          <span class="eps-pill ${isTop ? 'best' : ''}">${formatCurrency(r.eps)}</span>
+        </td>
+        <td class="text-right font-mono">${r.debtEquityRatio.toFixed(2)}x</td>
+        <td class="text-right font-mono">${formatCurrency(r.financialBreakEvenEbit, false)}</td>
+        <td class="text-center">
+          <button type="button" class="btn btn-outline view-steps-btn" data-id="${r.planId}" style="padding: 0.2rem 0.5rem; font-size: 0.7rem;">View Steps</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+
+    tbody.querySelectorAll('.view-steps-btn').forEach(btn => {
+      btn.addEventListener('click', () => openStepModal(btn.getAttribute('data-id')));
+    });
+  }
+
+  // --- 6. CANVAS CHART RENDERING ---
+  function drawEbitEpsChart() {
+    const canvas = document.getElementById('ebitEpsCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const width = canvas.width;
+    const height = canvas.height;
+
+    ctx.clearRect(0, 0, width, height);
+
+    const padLeft = 65;
+    const padRight = 30;
+    const padTop = 30;
+    const padBottom = 50;
+
+    const plotW = width - padLeft - padRight;
+    const plotH = height - padTop - padBottom;
+
+    // Collect key values
+    const results = state.plans.map(p => getPlanMetrics(p, state.ebit, state.taxRate));
+    const allIndiff = [];
+    for (let i = 0; i < state.plans.length; i++) {
+      for (let j = i + 1; j < state.plans.length; j++) {
+        const ind = calculateIndifference(state.plans[i], state.plans[j], state.taxRate);
+        if (ind.hasPoint) allIndiff.push(ind);
+      }
+    }
+
+    const minX = 0;
+    const maxX = Math.max(state.ebit * 1.8, 100000, ...results.map(r => r.financialBreakEvenEbit * 1.5), ...allIndiff.map(i => i.ebit * 1.2));
+
+    // Calculate minY & maxY across plans
+    let minY = 0;
+    let maxY = 1;
+    state.plans.forEach(p => {
+      const m0 = getPlanMetrics(p, minX, state.taxRate);
+      const mMax = getPlanMetrics(p, maxX, state.taxRate);
+      minY = Math.min(minY, m0.eps, mMax.eps);
+      maxY = Math.max(maxY, m0.eps, mMax.eps);
+    });
+    maxY *= 1.15;
+    if (minY < 0) minY *= 1.15;
+
+    const scaleX = val => padLeft + ((val - minX) / (maxX - minX)) * plotW;
+    const scaleY = val => padTop + plotH - ((val - minY) / (maxY - minY)) * plotH;
+
+    // Gridlines
+    ctx.strokeStyle = '#e2e8f0';
+    ctx.lineWidth = 1;
+    ctx.fillStyle = '#64748b';
+    ctx.font = '10px Inter, sans-serif';
+
+    // Horizontal grid
+    const ySteps = 5;
+    for (let i = 0; i <= ySteps; i++) {
+      const yVal = minY + (i / ySteps) * (maxY - minY);
+      const py = scaleY(yVal);
+      ctx.beginPath();
+      ctx.moveTo(padLeft, py);
+      ctx.lineTo(width - padRight, py);
+      ctx.stroke();
+
+      ctx.textAlign = 'right';
+      ctx.fillText(formatCurrency(yVal), padLeft - 8, py + 3);
+    }
+
+    // Vertical grid
+    const xSteps = 6;
+    for (let i = 0; i <= xSteps; i++) {
+      const xVal = minX + (i / xSteps) * (maxX - minX);
+      const px = scaleX(xVal);
+      ctx.beginPath();
+      ctx.moveTo(px, padTop);
+      ctx.lineTo(px, padTop + plotH);
+      ctx.stroke();
+
+      ctx.textAlign = 'center';
+      ctx.fillText(formatCompactCurrency(xVal), px, padTop + plotH + 18);
+    }
+
+    // Zero EPS line
+    if (minY <= 0 && maxY >= 0) {
+      const py0 = scaleY(0);
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(padLeft, py0);
+      ctx.lineTo(width - padRight, py0);
+      ctx.stroke();
+    }
+
+    // Expected EBIT vertical indicator
+    const pxEbit = scaleX(state.ebit);
+    ctx.strokeStyle = '#6366f1';
+    ctx.lineWidth = 2;
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.moveTo(pxEbit, padTop);
+    ctx.lineTo(pxEbit, padTop + plotH);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Expected EBIT top label
+    ctx.fillStyle = '#4f46e5';
+    ctx.font = 'bold 11px Inter, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(`Expected EBIT: ${formatCompactCurrency(state.ebit)}`, pxEbit, padTop - 8);
+
+    // Plot Plan Lines
+    state.plans.forEach(plan => {
+      ctx.strokeStyle = plan.color;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+
+      const numPoints = 40;
+      for (let i = 0; i <= numPoints; i++) {
+        const x = minX + (i / numPoints) * (maxX - minX);
+        const eps = getPlanMetrics(plan, x, state.taxRate).eps;
+        const px = scaleX(x);
+        const py = scaleY(eps);
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+    });
+
+    // Break-even markers (where EPS = 0)
+    if (state.showBepMarkers) {
+      results.forEach(r => {
+        if (r.financialBreakEvenEbit >= minX && r.financialBreakEvenEbit <= maxX) {
+          const px = scaleX(r.financialBreakEvenEbit);
+          const py = scaleY(0);
+          ctx.fillStyle = r.color;
+          ctx.beginPath();
+          ctx.arc(px, py, 5, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = '#fff';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
+      });
+    }
+
+    // Indifference Points
+    if (state.showIndiffMarkers) {
+      allIndiff.forEach(ind => {
+        if (ind.ebit >= minX && ind.ebit <= maxX) {
+          const px = scaleX(ind.ebit);
+          const py = scaleY(ind.eps);
+
+          ctx.fillStyle = '#f59e0b';
+          ctx.beginPath();
+          ctx.arc(px, py, 7, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.strokeStyle = '#fff';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+
+          ctx.fillStyle = '#b45309';
+          ctx.font = 'bold 10px Inter, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillText(`Indiff (${formatCompactCurrency(ind.ebit)})`, px, py - 11);
+        }
+      });
+    }
+  }
+
+  // --- 7. INDIFFERENCE VIEW RENDERING ---
+  function renderIndifferenceView() {
+    const s1 = document.getElementById('indiff-plan1-select');
+    const s2 = document.getElementById('indiff-plan2-select');
+    if (!s1 || !s2) return;
+
+    // Populate selects
+    const val1 = s1.value || state.plans[0]?.id;
+    const val2 = s2.value || state.plans[1]?.id || state.plans[0]?.id;
+
+    s1.innerHTML = '';
+    s2.innerHTML = '';
+
+    state.plans.forEach(p => {
+      s1.innerHTML += `<option value="${p.id}" ${p.id === val1 ? 'selected' : ''}>${p.name}</option>`;
+      s2.innerHTML += `<option value="${p.id}" ${p.id === val2 ? 'selected' : ''}>${p.name}</option>`;
+    });
+
+    document.getElementById('indiff-current-ebit').textContent = formatCurrency(state.ebit, false);
+    document.getElementById('indiff-current-tax').textContent = `Tax Rate: ${state.taxRate}%`;
+
+    const plan1 = state.plans.find(p => p.id === s1.value) || state.plans[0];
+    const plan2 = state.plans.find(p => p.id === s2.value) || state.plans[1] || state.plans[0];
+
+    const container = document.getElementById('indiff-result-container');
+    if (!container) return;
+
+    if (!plan1 || !plan2 || plan1.id === plan2.id) {
+      container.innerHTML = '<div class="card p-5 text-center text-slate-500">Please choose two distinct financing plans to analyze indifference.</div>';
+      return;
+    }
+
+    const ind = calculateIndifference(plan1, plan2, state.taxRate);
+
+    if (ind.hasPoint) {
+      const isAbove = state.ebit > ind.ebit;
+      const isBelow = state.ebit < ind.ebit;
+
+      container.innerHTML = `
+        <div class="indiff-callout">
+          <div class="quote-box">
+            â€œAt an EBIT of <span class="highlight-math font-mono">${formatCurrency(ind.ebit, false)}</span>, both financing alternatives generate the same EPS of <span class="highlight-math font-mono">${formatCurrency(ind.eps)}</span>. This is the EBITâ€“EPS indifference point.â€
+          </div>
+
+          <div class="decision-rules-grid">
+            <div class="decision-card ${isAbove ? 'active-zone' : ''}">
+              <div class="decision-card-head" style="color: var(--success-dark);">
+                <span>ðŸ“ˆ When Expected EBIT &gt; ${formatCurrency(ind.ebit, false)}</span>
+                ${isAbove ? '<span class="zone-pill">Current EBIT Zone</span>' : ''}
+              </div>
+              <p>
+                <strong>Choose ${ind.steeperPlan.name}!</strong> The firm's operating return exceeds the cost of debt. Financial leverage ("Trading on Equity") boosts earnings per share for common stockholders.
+              </p>
+            </div>
+
+            <div class="decision-card ${isBelow ? 'active-zone' : ''}">
+              <div class="decision-card-head" style="color: #1e40af;">
+                <span>ðŸ›¡ï¸ When Expected EBIT &lt; ${formatCurrency(ind.ebit, false)}</span>
+                ${isBelow ? '<span class="zone-pill">Current EBIT Zone</span>' : ''}
+              </div>
+              <p>
+                <strong>Choose ${ind.flatterPlan.name}!</strong> At low operating profit, fixed debt interest severely burdens net income. The lower-debt / equity-heavy plan offers safer and higher EPS.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="derivation-card mt-3">
+          <h4 style="font-weight: 700; font-size: 0.85rem;">Step-by-Step Mathematical Derivation</h4>
+          <div class="math-row font-mono">
+            <strong>Formula Equality:</strong> [(EBIT âˆ’ Iâ‚) Ã— (1 âˆ’ T) âˆ’ PDâ‚] Ã· Nâ‚ = [(EBIT âˆ’ Iâ‚‚) Ã— (1 âˆ’ T) âˆ’ PDâ‚‚] Ã· Nâ‚‚
+          </div>
+          <div class="math-row font-mono">
+            <strong>Values:</strong> Plan 1 (Iâ‚=${formatCurrency(getPlanMetrics(plan1, 0, state.taxRate).interestExpense, false)}, Nâ‚=${formatShares(plan1.numberOfShares)}) vs Plan 2 (Iâ‚‚=${formatCurrency(getPlanMetrics(plan2, 0, state.taxRate).interestExpense, false)}, Nâ‚‚=${formatShares(plan2.numberOfShares)})
+          </div>
+          <div class="math-row font-mono" style="color: var(--success-dark); font-weight: 700;">
+            <strong>Solved Indifference EBIT:</strong> ${formatCurrency(ind.ebit, false)} &rarr; Indifference EPS: ${formatCurrency(ind.eps)}
+          </div>
+        </div>
+      `;
+    } else {
+      container.innerHTML = `
+        <div class="card p-5" style="border-left: 4px solid var(--warning); background: #fffbeb;">
+          <h4 style="color: #92400e; font-weight: 800;">No Indifference Point Exists (Parallel Lines)</h4>
+          <p style="font-size: 0.8rem; color: #78350f; margin-top: 0.35rem;">
+            Both plans have the exact same number of shares (${formatShares(plan1.numberOfShares)}). Because their slopes <strong>(1 âˆ’ T) Ã· N</strong> are identical, their EBITâ€“EPS lines run parallel and never cross.
+          </p>
+        </div>
+      `;
+    }
+
+    // Render multi-plan matrix
+    const matrixBody = document.getElementById('indiff-matrix-body');
+    if (!matrixBody) return;
+    matrixBody.innerHTML = '';
+
+    for (let i = 0; i < state.plans.length; i++) {
+      for (let j = i + 1; j < state.plans.length; j++) {
+        const res = calculateIndifference(state.plans[i], state.plans[j], state.taxRate);
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td><strong>${state.plans[i].name}</strong> vs <strong>${state.plans[j].name}</strong></td>
+          <td class="text-right font-mono font-bold" style="color: var(--primary);">${res.hasPoint ? formatCurrency(res.ebit, false) : 'Parallel Lines'}</td>
+          <td class="text-right font-mono">${res.hasPoint ? formatCurrency(res.eps) : 'â€”'}</td>
+          <td style="color: var(--success); font-weight: 600;">${res.hasPoint ? res.steeperPlan.name : 'â€”'}</td>
+          <td style="color: var(--blue); font-weight: 600;">${res.hasPoint ? res.flatterPlan.name : 'â€”'}</td>
+        `;
+        matrixBody.appendChild(tr);
+      }
+    }
+  }
+
+  // --- 8. COMPARE VIEW RENDERING ---
+  function renderCompareView() {
+    document.getElementById('compare-ebit-val').textContent = formatCurrency(state.ebit, false);
+    document.getElementById('compare-tax-val').textContent = `${state.taxRate}%`;
+
+    const results = state.plans.map(p => getPlanMetrics(p, state.ebit, state.taxRate));
+
+    // Render EPS bar chart
+    drawEpsBarChart(results);
+
+    // Render Donuts
+    const donutsContainer = document.getElementById('donuts-container');
+    if (donutsContainer) {
+      donutsContainer.innerHTML = '';
+      results.forEach(r => {
+        const div = document.createElement('div');
+        div.className = 'donut-card';
+        div.innerHTML = `
+          <div class="donut-card-title">${r.planName}</div>
+          <div class="donut-canvas-wrap">
+            <canvas id="donut-${r.planId}" width="110" height="110"></canvas>
+            <div class="donut-center-text">
+              <span class="donut-center-pct">${r.debtRatio.toFixed(0)}%</span>
+              <span class="donut-center-lbl">Debt</span>
+            </div>
+          </div>
+          <div style="font-size: 0.65rem; color: var(--slate-500);">${formatCurrency(r.totalCapital, false)}</div>
+        `;
+        donutsContainer.appendChild(div);
+
+        setTimeout(() => {
+          drawDonutChart(`donut-${r.planId}`, r.equityAmount, r.debtAmount, r.preferenceCapital);
+        }, 10);
+      });
+    }
+
+    // Render Detailed Statements
+    const stContainer = document.getElementById('compare-statement-cards');
+    if (stContainer) {
+      stContainer.innerHTML = '';
+      results.forEach(r => {
+        const div = document.createElement('div');
+        div.className = 'statement-card';
+        div.innerHTML = `
+          <div class="card-color-stripe" style="background-color: ${r.color};"></div>
+          <div class="statement-card-body">
+            <h4 style="font-weight: 800; font-size: 1rem;">${r.planName}</h4>
+            <div class="statement-rows font-mono">
+              <div class="statement-row"><span>Operating Profit (EBIT):</span><strong>${formatCurrency(r.ebit, false)}</strong></div>
+              <div class="statement-row" style="color: var(--danger);"><span>Less: Interest (I):</span><span>âˆ’ ${formatCurrency(r.interestExpense)}</span></div>
+              <div class="statement-row border-top-bold"><span>Earnings Before Tax (EBT):</span><span>${formatCurrency(r.ebt)}</span></div>
+              <div class="statement-row" style="color: var(--slate-500);"><span>Less: Tax (${r.taxRate}%):</span><span>âˆ’ ${formatCurrency(r.taxAmount)}</span></div>
+              <div class="statement-row border-top-bold"><span>Profit After Tax (PAT):</span><span>${formatCurrency(r.pat)}</span></div>
+              ${r.preferenceDividend > 0 ? `<div class="statement-row" style="color: var(--purple);"><span>Less: Preference Div:</span><span>âˆ’ ${formatCurrency(r.preferenceDividend)}</span></div>` : ''}
+              <div class="statement-row border-top-bold" style="font-size: 0.8rem;"><span>Earnings for Equity:</span><span>${formatCurrency(r.earningsForEquity)}</span></div>
+              <div class="statement-row"><span>Equity Shares:</span><span>${formatShares(r.numberOfShares)}</span></div>
+              <div class="statement-row border-top-highlight"><span>Earnings Per Share (EPS):</span><span>${formatCurrency(r.eps)}</span></div>
+            </div>
+            <div class="ratio-grid">
+              <div class="ratio-box"><span class="ratio-box-label">D/E Ratio</span><span class="ratio-box-val font-mono">${r.debtEquityRatio.toFixed(2)}x</span></div>
+              <div class="ratio-box"><span class="ratio-box-label">Fin Break-Even</span><span class="ratio-box-val font-mono">${formatCurrency(r.financialBreakEvenEbit, false)}</span></div>
+            </div>
+          </div>
+        `;
+        stContainer.appendChild(div);
+      });
+    }
+  }
+
+  function drawEpsBarChart(results) {
+    const canvas = document.getElementById('epsBarCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width;
+    const h = canvas.height;
+
+    ctx.clearRect(0, 0, w, h);
+
+    const padL = 50;
+    const padR = 20;
+    const padT = 20;
+    const padB = 40;
+
+    const plotW = w - padL - padR;
+    const plotH = h - padT - padB;
+
+    const maxVal = Math.max(...results.map(r => r.eps), 1) * 1.25;
+
+    // Y Axis
+    ctx.strokeStyle = '#e2e8f0';
+    ctx.lineWidth = 1;
+    ctx.fillStyle = '#64748b';
+    ctx.font = '10px Inter, sans-serif';
+
+    for (let i = 0; i <= 4; i++) {
+      const yVal = (i / 4) * maxVal;
+      const py = padT + plotH - (yVal / maxVal) * plotH;
+      ctx.beginPath();
+      ctx.moveTo(padL, py);
+      ctx.lineTo(w - padR, py);
+      ctx.stroke();
+
+      ctx.textAlign = 'right';
+      ctx.fillText(formatCurrency(yVal), padL - 6, py + 3);
+    }
+
+    // Bars
+    const barWidth = Math.min(50, (plotW / results.length) * 0.6);
+    const gap = plotW / results.length;
+
+    results.forEach((r, idx) => {
+      const cx = padL + idx * gap + gap / 2;
+      const barH = (Math.max(0, r.eps) / maxVal) * plotH;
+      const py = padT + plotH - barH;
+
+      ctx.fillStyle = r.color;
+      ctx.beginPath();
+      ctx.roundRect(cx - barWidth / 2, py, barWidth, barH, [6, 6, 0, 0]);
+      ctx.fill();
+
+      // Top value
+      ctx.fillStyle = '#0f172a';
+      ctx.font = 'bold 11px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(formatCurrency(r.eps), cx, py - 6);
+
+      // Label below
+      ctx.fillStyle = '#475569';
+      ctx.font = '10px Inter, sans-serif';
+      const label = r.planName.length > 12 ? r.planName.substring(0, 10) + '...' : r.planName;
+      ctx.fillText(label, cx, padT + plotH + 16);
+    });
+  }
+
+  function drawDonutChart(canvasId, equity, debt, pref) {
+    const canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const total = equity + debt + pref;
+    if (total <= 0) return;
+
+    const cx = canvas.width / 2;
+    const cy = canvas.height / 2;
+    const outerR = 48;
+    const innerR = 32;
+
+    const data = [
+      { val: equity, color: '#3b82f6' },
+      { val: debt, color: '#10b981' },
+      { val: pref, color: '#8b5cf6' }
+    ].filter(d => d.val > 0);
+
+    let start = -Math.PI / 2;
+
+    data.forEach(slice => {
+      const angle = (slice.val / total) * Math.PI * 2;
+      ctx.beginPath();
+      ctx.arc(cx, cy, outerR, start, start + angle);
+      ctx.arc(cx, cy, innerR, start + angle, start, true);
+      ctx.closePath();
+      ctx.fillStyle = slice.color;
+      ctx.fill();
+      start += angle;
+    });
+  }
+
+  // --- 9. SENSITIVITY VIEW RENDERING ---
+  function renderSensitivityView() {
+    const sortedLevels = [...state.sensPoints].sort((a, b) => a - b);
+
+    // Render Active Chips
+    const chipsList = document.getElementById('sens-points-chips');
+    if (chipsList) {
+      chipsList.innerHTML = '';
+      sortedLevels.forEach(val => {
+        const chip = document.createElement('span');
+        chip.className = 'chip-item font-mono';
+        chip.innerHTML = `${formatCurrency(val, false)} <button class="chip-remove" data-val="${val}">&times;</button>`;
+        chipsList.appendChild(chip);
+      });
+      chipsList.querySelectorAll('.chip-remove').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const v = parseFloat(btn.getAttribute('data-val'));
+          if (state.sensPoints.length <= 2) {
+            alert('Keep at least 2 EBIT points for sensitivity comparison.');
+            return;
+          }
+          state.sensPoints = state.sensPoints.filter(x => x !== v);
+          renderSensitivityView();
+        });
+      });
+    }
+
+    // Render Table Header
+    const thead = document.getElementById('sensitivity-thead');
+    if (thead) {
+      let ths = '<tr><th>EBIT Level</th>';
+      state.plans.forEach(p => {
+        ths += `<th class="text-right"><span class="cell-dot" style="background:${p.color};"></span> ${p.name}</th>`;
+      });
+      ths += '<th class="text-center font-bold">Best Alternative</th></tr>';
+      thead.innerHTML = ths;
+    }
+
+    // Render Table Body
+    const tbody = document.getElementById('sensitivity-tbody');
+    if (tbody) {
+      tbody.innerHTML = '';
+      sortedLevels.forEach(ebitVal => {
+        let maxEps = -Infinity;
+        let bestName = '';
+
+        const epsList = state.plans.map(p => {
+          const eps = getPlanMetrics(p, ebitVal, state.taxRate).eps;
+          if (eps > maxEps) {
+            maxEps = eps;
+            bestName = p.name;
+          }
+          return { plan: p, eps };
+        });
+
+        const tr = document.createElement('tr');
+        let rowHtml = `<td class="font-mono font-bold">${formatCurrency(ebitVal, false)}</td>`;
+
+        epsList.forEach(item => {
+          const isBest = item.eps === maxEps && maxEps > 0;
+          rowHtml += `<td class="text-right font-mono"><span class="eps-pill ${isBest ? 'best' : ''}">${formatCurrency(item.eps)}</span></td>`;
+        });
+
+        rowHtml += `<td class="text-center"><span class="badge-mini" style="background: var(--primary-light); color: var(--primary); font-size: 0.75rem;">â˜… ${bestName}</span></td>`;
+        tr.innerHTML = rowHtml;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Draw Sensitivity Chart
+    drawSensitivityChart(sortedLevels);
+  }
+
+  function drawSensitivityChart(ebitLevels) {
+    const canvas = document.getElementById('sensitivityCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width;
+    const h = canvas.height;
+
+    ctx.clearRect(0, 0, w, h);
+
+    const padL = 60;
+    const padR = 25;
+    const padT = 25;
+    const padB = 40;
+
+    const plotW = w - padL - padR;
+    const plotH = h - padT - padB;
+
+    const minX = Math.min(...ebitLevels);
+    const maxX = Math.max(...ebitLevels);
+
+    let minY = 0;
+    let maxY = 1;
+    state.plans.forEach(p => {
+      ebitLevels.forEach(ebit => {
+        const eps = getPlanMetrics(p, ebit, state.taxRate).eps;
+        minY = Math.min(minY, eps);
+        maxY = Math.max(maxY, eps);
+      });
+    });
+    maxY *= 1.15;
+
+    const scaleX = val => padL + ((val - minX) / (maxX - minX || 1)) * plotW;
+    const scaleY = val => padT + plotH - ((val - minY) / (maxY - minY || 1)) * plotH;
+
+    // Grid
+    ctx.strokeStyle = '#e2e8f0';
+    ctx.lineWidth = 1;
+    ctx.fillStyle = '#64748b';
+    ctx.font = '10px Inter, sans-serif';
+
+    for (let i = 0; i <= 4; i++) {
+      const yVal = minY + (i / 4) * (maxY - minY);
+      const py = scaleY(yVal);
+      ctx.beginPath();
+      ctx.moveTo(padL, py);
+      ctx.lineTo(w - padR, py);
+      ctx.stroke();
+
+      ctx.textAlign = 'right';
+      ctx.fillText(formatCurrency(yVal), padL - 6, py + 3);
+    }
+
+    // Plot Lines
+    state.plans.forEach(plan => {
+      ctx.strokeStyle = plan.color;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+
+      ebitLevels.forEach((ebit, idx) => {
+        const eps = getPlanMetrics(plan, ebit, state.taxRate).eps;
+        const px = scaleX(ebit);
+        const py = scaleY(eps);
+
+        if (idx === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      });
+      ctx.stroke();
+
+      // Dots
+      ebitLevels.forEach(ebit => {
+        const eps = getPlanMetrics(plan, ebit, state.taxRate).eps;
+        const px = scaleX(ebit);
+        const py = scaleY(eps);
+        ctx.fillStyle = plan.color;
+        ctx.beginPath();
+        ctx.arc(px, py, 4, 0, Math.PI * 2);
+        ctx.fill();
+      });
+    });
+  }
+
+  // --- 10. QUIZ RENDERING ---
+  function renderQuiz() {
+    const list = document.getElementById('quiz-questions-list');
+    if (!list) return;
+    list.innerHTML = '';
+
+    QUIZ_DATA.forEach((q, idx) => {
+      const card = document.createElement('div');
+      card.className = 'quiz-q-card';
+
+      let optsHtml = '';
+      q.opts.forEach((opt, oIdx) => {
+        const isSel = state.quizAnswers[q.id] === oIdx;
+        let cls = 'quiz-opt-btn';
+        if (state.quizSubmitted) {
+          if (oIdx === q.ans) cls += ' correct';
+          else if (isSel) cls += ' wrong';
+        } else if (isSel) {
+          cls += ' selected';
+        }
+        optsHtml += `<button type="button" class="${cls}" data-qid="${q.id}" data-oidx="${oIdx}">${opt}</button>`;
+      });
+
+      card.innerHTML = `
+        <div class="quiz-q-title">${idx + 1}. ${q.q}</div>
+        <div class="quiz-options-list">${optsHtml}</div>
+        ${state.quizSubmitted ? `<div class="quiz-explanation"><strong>Explanation:</strong> ${q.exp}</div>` : ''}
+      `;
+      list.appendChild(card);
+    });
+
+    list.querySelectorAll('.quiz-opt-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        if (state.quizSubmitted) return;
+        const qid = parseInt(btn.getAttribute('data-qid'));
+        const oidx = parseInt(btn.getAttribute('data-oidx'));
+        state.quizAnswers[qid] = oidx;
+        renderQuiz();
+      });
+    });
+  }
+
+  // --- 11. HISTORY RENDERING ---
+  function renderHistory() {
+    const container = document.getElementById('history-items-container');
+    const badge = document.getElementById('history-count-badge');
+    if (badge) {
+      if (state.history.length > 0) {
+        badge.textContent = state.history.length;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+    }
+
+    if (!container) return;
+    container.innerHTML = '';
+
+    if (state.history.length === 0) {
+      container.innerHTML = '<div style="padding: 3rem 1rem; text-align: center; color: var(--slate-400);">No saved calculation scenarios yet. Click "Save Scenario" anytime to preserve your work.</div>';
+      return;
+    }
+
+    state.history.forEach(item => {
+      const div = document.createElement('div');
+      div.className = 'history-card';
+      const dateStr = new Date(item.timestamp).toLocaleString();
+
+      div.innerHTML = `
+        <div class="history-card-header">
+          <div>
+            <div class="history-card-title">${item.name}</div>
+            <div class="history-card-meta">Saved on ${dateStr} â€¢ ${item.plans.length} Financing Plans</div>
+          </div>
+          <div style="display: flex; gap: 0.5rem;">
+            <button class="btn btn-secondary load-hist-btn" data-id="${item.id}">Restore Scenario</button>
+            <button class="btn btn-danger delete-hist-btn" data-id="${item.id}">Delete</button>
+          </div>
+        </div>
+        <div class="ratio-labels font-mono">
+          <span>EBIT: <strong>${formatCurrency(item.ebit, false)}</strong></span>
+          <span>Tax: <strong>${item.taxRate}%</strong></span>
+        </div>
+      `;
+      container.appendChild(div);
+    });
+
+    container.querySelectorAll('.load-hist-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const it = state.history.find(x => x.id === btn.getAttribute('data-id'));
+        if (it) {
+          state.plans = JSON.parse(JSON.stringify(it.plans));
+          state.ebit = it.ebit;
+          state.taxRate = it.taxRate;
+          state.currency = it.currency || state.currency;
+          document.getElementById('ebit-input').value = state.ebit;
+          document.getElementById('ebit-slider').value = state.ebit;
+          document.getElementById('tax-input').value = state.taxRate;
+          renderAll();
+          switchTab('tab-ebit-eps');
+          showToast(`Restored scenario "${it.name}"`);
+        }
+      });
+    });
+
+    container.querySelectorAll('.delete-hist-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.history = state.history.filter(x => x.id !== btn.getAttribute('data-id'));
+        renderHistory();
+        persistState();
+        showToast('Deleted calculation record.');
+      });
+    });
+  }
+
+  // --- 12. MODAL DIALOGS ---
+  function openPlanModal(planId = null) {
+    const modal = document.getElementById('modal-plan');
+    const form = document.getElementById('form-plan');
+    const title = document.getElementById('modal-plan-title');
+
+    state.editingPlanId = planId;
+
+    let plan = state.plans.find(p => p.id === planId);
+    if (!plan) {
+      // Default new plan
+      plan = {
+        id: `plan-${Date.now()}`,
+        name: `Plan ${String.fromCharCode(65 + state.plans.length)}`,
+        color: COLOR_PALETTE[state.plans.length % COLOR_PALETTE.length],
+        debtAmount: 400000,
+        interestRate: 10,
+        equityAmount: 600000,
+        sharePrice: 10,
+        numberOfShares: 60000,
+        preferenceCapital: 0,
+        preferenceDividendRate: 9
+      };
+      title.textContent = 'Add New Financing Plan';
+    } else {
+      title.textContent = 'Edit Financing Plan';
+    }
+
+    document.getElementById('plan-id').value = plan.id;
+    document.getElementById('plan-name').value = plan.name;
+    document.getElementById('plan-color').value = plan.color;
+    document.getElementById('plan-debt-amt').value = plan.debtAmount;
+    document.getElementById('plan-interest-rate').value = plan.interestRate;
+    document.getElementById('plan-equity-amt').value = plan.equityAmount;
+    document.getElementById('plan-share-price').value = plan.sharePrice;
+    document.getElementById('plan-shares-cnt').value = plan.numberOfShares;
+    document.getElementById('plan-pref-amt').value = plan.preferenceCapital;
+    document.getElementById('plan-pref-rate').value = plan.preferenceDividendRate;
+
+    state.selectedPlanColor = plan.color;
+    renderPalette();
+    updatePlanPreviews();
+
+    modal.classList.remove('hidden');
+  }
+
+  function renderPalette() {
+    const wrap = document.getElementById('color-palette-picker');
+    if (!wrap) return;
+    wrap.innerHTML = '';
+    COLOR_PALETTE.forEach(c => {
+      const dot = document.createElement('div');
+      dot.className = `palette-dot ${state.selectedPlanColor === c ? 'active' : ''}`;
+      dot.style.backgroundColor = c;
+      dot.addEventListener('click', () => {
+        state.selectedPlanColor = c;
+        document.getElementById('plan-color').value = c;
+        renderPalette();
+      });
+      wrap.appendChild(dot);
+    });
+  }
+
+  function updatePlanPreviews() {
+    const debt = parseFloat(document.getElementById('plan-debt-amt').value) || 0;
+    const rate = parseFloat(document.getElementById('plan-interest-rate').value) || 0;
+    const eq = parseFloat(document.getElementById('plan-equity-amt').value) || 0;
+    const pref = parseFloat(document.getElementById('plan-pref-amt').value) || 0;
+    const prefRate = parseFloat(document.getElementById('plan-pref-rate').value) || 0;
+
+    document.getElementById('plan-interest-preview').textContent = formatCurrency((debt * rate) / 100);
+    document.getElementById('plan-pref-preview').textContent = formatCurrency((pref * prefRate) / 100);
+    document.getElementById('plan-total-preview').textContent = formatCurrency(debt + eq + pref, false);
+  }
+
+  function closePlanModal() {
+    document.getElementById('modal-plan').classList.add('hidden');
+  }
+
+  function duplicatePlan(planId) {
+    const plan = state.plans.find(p => p.id === planId);
+    if (!plan) return;
+    const copy = {
+      ...plan,
+      id: `plan-${Date.now()}`,
+      name: `${plan.name} (Copy)`,
+      color: COLOR_PALETTE[(state.plans.length + 1) % COLOR_PALETTE.length]
+    };
+    state.plans.push(copy);
+    renderAll();
+    showToast(`Duplicated "${plan.name}"`);
+  }
+
+  function deletePlan(planId) {
+    if (state.plans.length <= 1) {
+      alert('You must have at least one financing plan to analyze.');
+      return;
+    }
+    state.plans = state.plans.filter(p => p.id !== planId);
+    renderAll();
+    showToast('Plan deleted.');
+  }
+
+  function openStepModal(planId) {
+    const plan = state.plans.find(p => p.id === planId);
+    if (!plan) return;
+    const r = getPlanMetrics(plan, state.ebit, state.taxRate);
+
+    document.getElementById('step-modal-title').textContent = `${r.planName} Breakdown`;
+    const body = document.getElementById('step-modal-body');
+    body.innerHTML = `
+      <div class="ratio-labels p-2 bg-slate-50 rounded font-mono" style="font-size: 0.75rem;">
+        <span>EBIT: <strong>${formatCurrency(r.ebit, false)}</strong></span>
+        <span>Tax: <strong>${r.taxRate}%</strong></span>
+        <span>Shares: <strong>${formatShares(r.numberOfShares)}</strong></span>
+      </div>
+
+      <div class="step-item">
+        <div class="step-item-head">
+          <span><span class="step-num-badge">1</span> Calculate Earnings Before Tax (EBT)</span>
+          <span class="font-mono">EBT = EBIT âˆ’ Interest</span>
+        </div>
+        <div class="step-math font-mono">
+          EBT = ${formatCurrency(r.ebit, false)} âˆ’ ${formatCurrency(r.interestExpense, false)} = <strong>${formatCurrency(r.ebt)}</strong>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div class="step-item-head">
+          <span><span class="step-num-badge">2</span> Calculate Corporate Tax</span>
+          <span class="font-mono">Tax = EBT Ã— Tax Rate</span>
+        </div>
+        <div class="step-math font-mono">
+          Tax = ${formatCurrency(r.ebt)} Ã— ${r.taxRate}% = <strong>${formatCurrency(r.taxAmount)}</strong>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div class="step-item-head">
+          <span><span class="step-num-badge">3</span> Calculate Profit After Tax (PAT)</span>
+          <span class="font-mono">PAT = EBT âˆ’ Tax</span>
+        </div>
+        <div class="step-math font-mono">
+          PAT = ${formatCurrency(r.ebt)} âˆ’ ${formatCurrency(r.taxAmount)} = <strong>${formatCurrency(r.pat)}</strong>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div class="step-item-head">
+          <span><span class="step-num-badge">4</span> Earnings for Equity Shareholders (EAES)</span>
+          <span class="font-mono">EAES = PAT âˆ’ Preference Dividend</span>
+        </div>
+        <div class="step-math font-mono">
+          EAES = ${formatCurrency(r.pat)} âˆ’ ${formatCurrency(r.preferenceDividend)} = <strong>${formatCurrency(r.earningsForEquity)}</strong>
+        </div>
+      </div>
+
+      <div class="step-item" style="border-color: var(--primary); background: var(--primary-light);">
+        <div class="step-item-head" style="color: var(--primary);">
+          <span><span class="step-num-badge" style="background: var(--primary);">5</span> Calculate Earnings Per Share (EPS)</span>
+          <span class="font-mono">EPS = EAES Ã· Number of Shares</span>
+        </div>
+        <div class="step-math font-mono" style="font-size: 0.95rem; font-weight: 800; color: #1e1b4b;">
+          EPS = ${formatCurrency(r.earningsForEquity)} Ã· ${formatShares(r.numberOfShares)} shares = <strong>${formatCurrency(r.eps)}</strong>
+        </div>
+      </div>
+
+      <div class="ratio-grid mt-2">
+        <div class="ratio-box">
+          <span class="ratio-box-label">Financial Break-Even EBIT</span>
+          <span class="ratio-box-val font-mono">${formatCurrency(r.financialBreakEvenEbit, false)}</span>
+        </div>
+        <div class="ratio-box">
+          <span class="ratio-box-label">Degree of Financial Leverage (DFL)</span>
+          <span class="ratio-box-val font-mono">${r.degreeOfFinancialLeverage ? r.degreeOfFinancialLeverage.toFixed(2) + 'x' : 'N/A'}</span>
+        </div>
+      </div>
+    `;
+
+    document.getElementById('modal-step').classList.remove('hidden');
+  }
+
+  function closeStepModal() {
+    document.getElementById('modal-step').classList.add('hidden');
+  }
+
+  function switchTab(targetId) {
+    document.querySelectorAll('.nav-tab').forEach(t => {
+      t.classList.toggle('active', t.getAttribute('data-tab') === targetId);
+    });
+    document.querySelectorAll('.tab-panel').forEach(p => {
+      p.classList.toggle('active', p.id === targetId);
+    });
+
+    if (targetId === 'tab-ebit-eps') setTimeout(drawEbitEpsChart, 10);
+    if (targetId === 'tab-compare') setTimeout(renderCompareView, 10);
+    if (targetId === 'tab-sensitivity') setTimeout(() => drawSensitivityChart([...state.sensPoints].sort((a,b)=>a-b)), 10);
+  }
+
+  // --- 13. EVENT LISTENERS SETUP ---
+  function initEvents() {
+    // Navigation Tabs
+    document.querySelectorAll('.nav-tab').forEach(tab => {
+      tab.addEventListener('click', () => switchTab(tab.getAttribute('data-tab')));
+    });
+
+    // Learning Sub-tabs
+    document.querySelectorAll('.sub-tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.sub-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.sub-panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.getAttribute('data-sub')).classList.add('active');
+      });
+    });
+
+    // Currency Switcher
+    document.querySelectorAll('.curr-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.currency = btn.getAttribute('data-currency');
+        renderAll();
+      });
+    });
+
+    // Presets Dropdown
+    document.getElementById('preset-selector').addEventListener('change', e => {
+      const preset = PRESETS[e.target.value];
+      if (preset) {
+        state.plans = JSON.parse(JSON.stringify(preset.plans));
+        state.ebit = preset.ebit;
+        state.taxRate = preset.taxRate;
+        document.getElementById('ebit-input').value = state.ebit;
+        document.getElementById('ebit-slider').value = state.ebit;
+        document.getElementById('tax-input').value = state.taxRate;
+        renderAll();
+        showToast(`Loaded preset: "${preset.name}"`);
+      }
+      e.target.value = '';
+    });
+
+    // Reset Button
+    document.getElementById('btn-reset').addEventListener('click', () => {
+      if (confirm('Reset to default textbook case?')) {
+        const preset = PRESETS.classic;
+        state.plans = JSON.parse(JSON.stringify(preset.plans));
+        state.ebit = preset.ebit;
+        state.taxRate = preset.taxRate;
+        document.getElementById('ebit-input').value = state.ebit;
+        document.getElementById('ebit-slider').value = state.ebit;
+        document.getElementById('tax-input').value = state.taxRate;
+        renderAll();
+        showToast('Reset to default classic case.');
+      }
+    });
+
+    // Save Scenario
+    document.getElementById('btn-save-scenario').addEventListener('click', () => {
+      const name = prompt('Enter a name for this scenario:', `Analysis ${new Date().toLocaleDateString()}`);
+      if (!name) return;
+      state.history.unshift({
+        id: `hist-${Date.now()}`,
+        timestamp: Date.now(),
+        name: name.trim(),
+        ebit: state.ebit,
+        taxRate: state.taxRate,
+        currency: state.currency,
+        plans: JSON.parse(JSON.stringify(state.plans))
+      });
+      renderHistory();
+      persistState();
+      showToast(`Saved scenario "${name}"`);
+    });
+
+    // EBIT Input & Slider
+    const ebitInp = document.getElementById('ebit-input');
+    const ebitSlide = document.getElementById('ebit-slider');
+
+    ebitInp.addEventListener('input', e => {
+      state.ebit = Math.max(0, parseFloat(e.target.value) || 0);
+      ebitSlide.value = state.ebit;
+      ebitSlide.max = Math.max(500000, state.ebit * 2);
+      renderAll();
+    });
+
+    ebitSlide.addEventListener('input', e => {
+      state.ebit = parseFloat(e.target.value) || 0;
+      ebitInp.value = state.ebit;
+      renderAll();
+    });
+
+    // Stepper buttons
+    document.querySelectorAll('.step-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const delta = parseFloat(btn.getAttribute('data-delta'));
+        state.ebit = Math.max(0, state.ebit + delta);
+        ebitInp.value = state.ebit;
+        ebitSlide.value = state.ebit;
+        ebitSlide.max = Math.max(500000, state.ebit * 2);
+        renderAll();
+      });
+    });
+
+    // Tax Input & Presets
+    const taxInp = document.getElementById('tax-input');
+    taxInp.addEventListener('input', e => {
+      state.taxRate = Math.min(100, Math.max(0, parseFloat(e.target.value) || 0));
+      document.querySelectorAll('.tax-preset-btn').forEach(b => {
+        b.classList.toggle('active', parseFloat(b.getAttribute('data-tax')) === state.taxRate);
+      });
+      renderAll();
+    });
+
+    document.querySelectorAll('.tax-preset-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        state.taxRate = parseFloat(btn.getAttribute('data-tax'));
+        taxInp.value = state.taxRate;
+        document.querySelectorAll('.tax-preset-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        renderAll();
+      });
+    });
+
+    // Chart Markers Toggles
+    document.getElementById('toggle-indiff-markers').addEventListener('change', e => {
+      state.showIndiffMarkers = e.target.checked;
+      drawEbitEpsChart();
+    });
+
+    document.getElementById('toggle-bep-markers').addEventListener('change', e => {
+      state.showBepMarkers = e.target.checked;
+      drawEbitEpsChart();
+    });
+
+    // Plan Selectors for Indifference
+    document.getElementById('indiff-plan1-select').addEventListener('change', renderIndifferenceView);
+    document.getElementById('indiff-plan2-select').addEventListener('change', renderIndifferenceView);
+
+    // Modal Events
+    document.getElementById('btn-add-plan').addEventListener('click', () => openPlanModal());
+    document.getElementById('btn-close-plan-modal').addEventListener('click', closePlanModal);
+    document.getElementById('btn-cancel-plan').addEventListener('click', closePlanModal);
+    document.getElementById('btn-close-step-modal').addEventListener('click', closeStepModal);
+    document.getElementById('btn-done-step').addEventListener('click', closeStepModal);
+
+    // Live preview inputs in modal
+    ['plan-debt-amt', 'plan-interest-rate', 'plan-equity-amt', 'plan-share-price', 'plan-pref-amt', 'plan-pref-rate'].forEach(id => {
+      document.getElementById(id).addEventListener('input', () => {
+        if (id === 'plan-equity-amt' || id === 'plan-share-price') {
+          const eq = parseFloat(document.getElementById('plan-equity-amt').value) || 0;
+          const price = parseFloat(document.getElementById('plan-share-price').value) || 10;
+          document.getElementById('plan-shares-cnt').value = Math.round(eq / price);
+        }
+        updatePlanPreviews();
+      });
+    });
+
+    // Submit Plan Form
+    document.getElementById('form-plan').addEventListener('submit', e => {
+      e.preventDefault();
+      const planName = document.getElementById('plan-name').value.trim();
+      const debt = parseFloat(document.getElementById('plan-debt-amt').value) || 0;
+      const rate = parseFloat(document.getElementById('plan-interest-rate').value) || 0;
+      const eq = parseFloat(document.getElementById('plan-equity-amt').value) || 0;
+      const price = parseFloat(document.getElementById('plan-share-price').value) || 10;
+      const shares = parseInt(document.getElementById('plan-shares-cnt').value) || 1;
+      const pref = parseFloat(document.getElementById('plan-pref-amt').value) || 0;
+      const prefRate = parseFloat(document.getElementById('plan-pref-rate').value) || 0;
+      const color = document.getElementById('plan-color').value;
+
+      if (!planName) { alert('Plan name is required'); return; }
+      if (shares <= 0) { alert('Number of shares must be > 0'); return; }
+      if (debt + eq + pref <= 0) { alert('Total capital must be > 0'); return; }
+
+      if (state.editingPlanId) {
+        state.plans = state.plans.map(p => p.id === state.editingPlanId ? {
+          ...p,
+          name: planName,
+          debtAmount: debt,
+          interestRate: rate,
+          equityAmount: eq,
+          sharePrice: price,
+          numberOfShares: shares,
+          preferenceCapital: pref,
+          preferenceDividendRate: prefRate,
+          color
+        } : p);
+      } else {
+        state.plans.push({
+          id: `plan-${Date.now()}`,
+          name: planName,
+          debtAmount: debt,
+          interestRate: rate,
+          equityAmount: eq,
+          sharePrice: price,
+          numberOfShares: shares,
+          preferenceCapital: pref,
+          preferenceDividendRate: prefRate,
+          color
+        });
+      }
+
+      closePlanModal();
+      renderAll();
+      showToast('Plan saved successfully!');
+    });
+
+    // Sensitivity Point Add
+    document.getElementById('form-add-sens-point').addEventListener('submit', e => {
+      e.preventDefault();
+      const inp = document.getElementById('input-new-sens');
+      const val = parseFloat(inp.value);
+      if (!isNaN(val) && val >= 0 && !state.sensPoints.includes(val)) {
+        state.sensPoints.push(val);
+        inp.value = '';
+        renderSensitivityView();
+      }
+    });
+
+    document.getElementById('btn-sens-default').addEventListener('click', () => {
+      state.sensPoints = [50000, 75000, 100000, 125000, 150000];
+      renderSensitivityView();
+    });
+
+    document.getElementById('btn-sens-100k').addEventListener('click', () => {
+      state.sensPoints = [100000, 150000, 200000, 250000, 300000];
+      renderSensitivityView();
+    });
+
+    document.getElementById('btn-sens-200k').addEventListener('click', () => {
+      state.sensPoints = [200000, 300000, 400000, 500000, 600000];
+      renderSensitivityView();
+    });
+
+    // Quiz Submit & Retry
+    document.getElementById('btn-submit-quiz').addEventListener('click', () => {
+      state.quizSubmitted = true;
+      let score = 0;
+      QUIZ_DATA.forEach(q => {
+        if (state.quizAnswers[q.id] === q.ans) score++;
+      });
+      const badge = document.getElementById('quiz-score-badge');
+      badge.textContent = `Score: ${score} / ${QUIZ_DATA.length}`;
+      badge.classList.remove('hidden');
+      document.getElementById('btn-submit-quiz').classList.add('hidden');
+      document.getElementById('btn-reset-quiz').classList.remove('hidden');
+      renderQuiz();
+    });
+
+    document.getElementById('btn-reset-quiz').addEventListener('click', () => {
+      state.quizSubmitted = false;
+      state.quizAnswers = {};
+      document.getElementById('quiz-score-badge').classList.add('hidden');
+      document.getElementById('btn-submit-quiz').classList.remove('hidden');
+      document.getElementById('btn-reset-quiz').classList.add('hidden');
+      renderQuiz();
+    });
+
+    // Export CSV
+    document.getElementById('btn-export-csv').addEventListener('click', () => {
+      if (state.history.length === 0) {
+        alert('No calculation history to export.');
+        return;
+      }
+      let csv = 'Timestamp,Scenario Name,EBIT,Tax Rate,Plan Name,EPS,Interest,Debt-Equity Ratio\n';
+      state.history.forEach(h => {
+        const d = new Date(h.timestamp).toISOString();
+        h.plans.forEach(p => {
+          const m = getPlanMetrics(p, h.ebit, h.taxRate);
+          csv += `"${d}","${h.name}",${h.ebit},${h.taxRate},"${p.name}",${m.eps.toFixed(2)},${m.interestExpense.toFixed(2)},${m.debtEquityRatio.toFixed(2)}\n`;
+        });
+      });
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `capital_structure_export_${Date.now()}.csv`;
+      a.click();
+    });
+
+    // Print Report
+    document.getElementById('btn-print-report').addEventListener('click', () => {
+      window.print();
+    });
+
+    // Clear History
+    document.getElementById('btn-clear-history').addEventListener('click', () => {
+      if (confirm('Clear all saved calculation history?')) {
+        state.history = [];
+        renderHistory();
+        persistState();
+        showToast('All history cleared.');
+      }
+    });
+
+    // Window resize chart re-render
+    window.addEventListener('resize', () => {
+      drawEbitEpsChart();
+      drawSensitivityChart([...state.sensPoints].sort((a,b)=>a-b));
+    });
+  }
+
+  // --- 14. INITIALIZATION ---
+  document.addEventListener('DOMContentLoaded', () => {
+    initEvents();
+    renderAll();
+  });
+})();
+
+</script>
+</body>
 </html>
+
