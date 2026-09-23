@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Capital Structure Studio | EBIT–EPS & Leverage Calculator</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Toast Notification -->
+  <div id="toast" class="toast hidden"></div>
+
+  <!-- Header Navigation -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="header-top">
+        <div class="brand">
+          <div class="brand-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/>
+              <path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/>
+              <path d="M7 21h10"/>
+              <path d="M12 3v18"/>
+              <path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>
+            </svg>
+          </div>
+          <div>
+            <div class="brand-title-wrap">
+              <h1 class="brand-title">Capital Structure Studio</h1>
+              <span class="badge-sub">EBIT–EPS & Leverage Lab</span>
+            </div>
+            <p class="brand-desc">Financial calculator, break-even indifference analyzer & educational studio</p>
+          </div>
+        </div>
+
+        <!-- Global Action Controls -->
+        <div class="header-actions">
+          <!-- Currency Picker -->
+          <div class="currency-group">
+            <span class="ctrl-label">Currency:</span>
+            <button type="button" class="curr-btn active" data-currency="INR">₹ INR</button>
+            <button type="button" class="curr-btn" data-currency="USD">$ USD</button>
+            <button type="button" class="curr-btn" data-currency="EUR">€ EUR</button>
+            <button type="button" class="curr-btn" data-currency="GBP">£ GBP</button>
+          </div>
+
+          <!-- Case Preset Selector -->
+          <div class="select-wrapper">
+            <select id="preset-selector" class="preset-select">
+              <option value="" disabled selected>📚 Load Case Preset...</option>
+              <option value="classic">Standard Textbook (₹10L Capital)</option>
+              <option value="preference">Expansion with Pref Shares (₹20L)</option>
+              <option value="corporate">Corporate Mix (₹50L Capital)</option>
+            </select>
+          </div>
+
+          <!-- Save Button -->
+          <button type="button" id="btn-save-scenario" class="btn btn-secondary">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Save Scenario
+          </button>
+
+          <!-- Reset Button -->
+          <button type="button" id="btn-reset" class="btn btn-outline" title="Reset to default textbook case">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+            Reset
+          </button>
+        </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <nav class="nav-tabs" id="nav-tabs">
+        <button class="nav-tab active" data-tab="tab-ebit-eps">
+          <span class="tab-icon">📊</span>
+          <span>EBIT–EPS Analysis</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-indifference">
+          <span class="tab-icon">⚖️</span>
+          <span>Break-even / Indifference</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-compare">
+          <span class="tab-icon">🔄</span>
+          <span>Compare Financing Plans</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-sensitivity">
+          <span class="tab-icon">📈</span>
+          <span>Sensitivity Analysis</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-learning">
+          <span class="tab-icon">🎓</span>
+          <span>Learning Lab & Formulas</span>
+          <span class="badge-mini">Guide</span>
+        </button>
+        <button class="nav-tab" data-tab="tab-history">
+          <span class="tab-icon">📜</span>
+          <span>History & Scenarios</span>
+          <span id="history-count-badge" class="badge-count hidden">0</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Container -->
+  <main class="main-container">
+    <!-- ===================================================== -->
+    <!-- TAB 1: EBIT–EPS ANALYSIS -->
+    <!-- ===================================================== -->
+    <section id="tab-ebit-eps" class="tab-panel active">
+      <!-- Global Controls Card -->
+      <div class="card card-controls">
+        <div class="controls-grid">
+          <!-- EBIT Control -->
+          <div class="control-col">
+            <div class="control-header">
+              <label class="control-label" for="ebit-input">
+                <span class="label-icon">💰</span> Expected Operating Profit (EBIT)
+              </label>
+              <span id="ebit-badge" class="val-badge font-mono">₹2,00,000</span>
+            </div>
+            <div class="stepper-row">
+              <input type="number" id="ebit-input" class="form-input font-bold" min="0" step="5000" value="200000">
+              <div class="btn-group-step">
+                <button type="button" class="step-btn" data-delta="-50000">-50k</button>
+                <button type="button" class="step-btn" data-delta="-10000">-10k</button>
+                <button type="button" class="step-btn" data-delta="10000">+10k</button>
+                <button type="button" class="step-btn" data-delta="50000">+50k</button>
+              </div>
+            </div>
+            <input type="range" id="ebit-slider" class="range-slider" min="0" max="600000" step="5000" value="200000">
+            <div class="slider-ticks font-mono">
+              <span>0</span>
+              <span id="slider-mid">₹3,00,000</span>
+              <span id="slider-max">₹6,00,000</span>
+            </div>
+          </div>
+
+          <!-- Tax Rate Control -->
+          <div class="control-col bg-subtle">
+            <div class="control-header">
+              <label class="control-label" for="tax-input">
+                <span class="label-icon">🏛️</span> Corporate Tax Rate (T)
+              </label>
+              <span id="tax-badge" class="val-badge badge-green font-mono">35%</span>
+            </div>
+            <div class="stepper-row">
+              <div class="input-suffix-wrap">
+                <input type="number" id="tax-input" class="form-input font-bold" min="0" max="100" step="0.5" value="35">
+                <span class="input-suffix">%</span>
+              </div>
+              <div class="tax-presets">
+                <button type="button" class="tax-preset-btn" data-tax="25">25%</button>
+                <button type="button" class="tax-preset-btn" data-tax="30">30%</button>
+                <button type="button" class="tax-preset-btn active" data-tax="35">35%</button>
+                <button type="button" class="tax-preset-btn" data-tax="40">40%</button>
+              </div>
+            </div>
+            <p class="helper-text">
+              Tax rate provides interest tax shield: <span class="font-mono font-bold">(1 − Tax Rate)</span>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Plans Header & Actions -->
+      <div class="section-toolbar">
+        <div>
+          <h2 class="section-title">Financing Alternatives (<span id="plans-count">3</span>)</h2>
+          <p class="section-subtitle">Customize capital structures to evaluate the impact of debt, interest, and equity dilution.</p>
+        </div>
+        <button type="button" id="btn-add-plan" class="btn btn-primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Add Alternative Plan
+        </button>
+      </div>
+
+      <!-- Plans Cards Grid -->
+      <div id="plans-cards-grid" class="cards-grid"></div>
+
+      <!-- Master Results Table -->
+      <div class="card table-card">
+        <div class="table-header">
+          <div>
+            <h3 class="card-title">📋 Financing Plans & EPS Calculation Table</h3>
+            <p class="card-desc">Compare earnings per share, interest cost, tax deductions, and leverage side by side.</p>
+          </div>
+          <div class="formula-chip font-mono">
+            EPS = [(EBIT − I) × (1 − T) − PD] ÷ N
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table class="data-table" id="master-plan-table">
+            <thead>
+              <tr>
+                <th>Financing Plan</th>
+                <th class="text-right">Total Capital</th>
+                <th class="text-right">EBIT</th>
+                <th class="text-right">Interest (I)</th>
+                <th class="text-right">Tax (T)</th>
+                <th class="text-right">Pref. Div (PD)</th>
+                <th class="text-right">Equity Shares (N)</th>
+                <th class="text-right font-bold text-highlight">EPS</th>
+                <th class="text-right">D/E Ratio</th>
+                <th class="text-right">Fin. Break-Even</th>
+                <th class="text-center">Step-by-Step</th>
+              </tr>
+            </thead>
+            <tbody id="master-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Interactive EBIT-EPS Chart Card -->
+      <div class="card chart-card">
+        <div class="chart-header">
+          <div>
+            <h3 class="card-title">📊 Interactive EBIT–EPS Trajectory Graph</h3>
+            <p class="card-desc">Visualizes EPS slopes and indifference intersections across operating income levels.</p>
+          </div>
+          <div class="chart-legend-toggles">
+            <label class="checkbox-label">
+              <input type="checkbox" id="toggle-indiff-markers" checked>
+              <span>Indifference Points</span>
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" id="toggle-bep-markers" checked>
+              <span>Break-even EBIT</span>
+            </label>
+          </div>
+        </div>
+        <div class="canvas-container">
+          <canvas id="ebitEpsCanvas" width="900" height="420"></canvas>
+          <div id="chart-tooltip" class="chart-tooltip hidden"></div>
+        </div>
+        <div class="chart-footer">
+          <div class="chart-annotation">
+            <span class="info-icon">ℹ️</span>
+            <span><strong>Concept:</strong> Steeper lines represent higher financial leverage (fewer equity shares). Line slope = <span class="font-mono font-bold">(1 − Tax) ÷ N</span>.</span>
+          </div>
+          <div class="legend-indicator-row font-medium">
+            <span class="legend-dot-item"><span class="dot dot-amber"></span> Indifference Intersection</span>
+            <span class="legend-dot-item"><span class="dot dot-indigo"></span> Current EBIT Marker</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================== -->
+    <!-- TAB 2: BREAK-EVEN EBIT / INDIFFERENCE POINT -->
+    <!-- ===================================================== -->
+    <section id="tab-indifference" class="tab-panel">
+      <!-- Banner -->
+      <div class="hero-banner">
+        <div class="hero-content">
+          <span class="hero-badge">⚖️ EBIT–EPS Indifference Point Analyzer</span>
+          <h2 class="hero-title">Break-Even Operating Profit (Indifference Point)</h2>
+          <p class="hero-desc">
+            The EBIT level where two capital structure alternatives generate exactly equal Earnings Per Share (EPS). Above this point, financial leverage increases EPS. Below this point, debt interest decreases EPS.
+          </p>
+        </div>
+        <div class="hero-metric-card">
+          <span class="hero-metric-label">Current Expected EBIT</span>
+          <span id="indiff-current-ebit" class="hero-metric-val font-mono">₹2,00,000</span>
+          <span id="indiff-current-tax" class="hero-metric-sub">Tax Rate: 35%</span>
+        </div>
+      </div>
+
+      <!-- Plan Pair Selectors -->
+      <div class="card selector-card">
+        <div class="pair-selector-row">
+          <div class="pair-col">
+            <label class="control-label" for="indiff-plan1-select">Financing Plan 1</label>
+            <select id="indiff-plan1-select" class="form-select font-bold"></select>
+          </div>
+          <div class="vs-circle">VS</div>
+          <div class="pair-col">
+            <label class="control-label" for="indiff-plan2-select">Financing Plan 2</label>
+            <select id="indiff-plan2-select" class="form-select font-bold"></select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Result Callout Block -->
+      <div id="indiff-result-container"></div>
+
+      <!-- Multi-Plan Indifference Matrix -->
+      <div class="card table-card" id="indiff-matrix-card">
+        <div class="table-header">
+          <div>
+            <h3 class="card-title">🧮 Multi-Plan Indifference Matrix</h3>
+            <p class="card-desc">Break-even EBIT and indifference EPS across all pairwise combinations of your financing plans.</p>
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table class="data-table" id="indiff-matrix-table">
+            <thead>
+              <tr>
+                <th>Plan Pair</th>
+                <th class="text-right font-bold">Indifference EBIT</th>
+                <th class="text-right">Indifference EPS</th>
+                <th>Dominant Above Indifference</th>
+                <th>Dominant Below Indifference</th>
+              </tr>
+            </thead>
+            <tbody id="indiff-matrix-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================== -->
+    <!-- TAB 3: COMPARE FINANCING PLANS -->
+    <!-- ===================================================== -->
+    <section id="tab-compare" class="tab-panel">
+      <!-- Summary Bar -->
+      <div class="card summary-header-card">
+        <div>
+          <h2 class="section-title">🔄 Capital Structure Comparison Dashboard</h2>
+          <p class="section-subtitle">Evaluate capital allocation, financial risk profiles, and EPS generation across all structures.</p>
+        </div>
+        <div class="metric-pill-group">
+          <div class="metric-pill">
+            <span class="pill-label">Operating Profit (EBIT)</span>
+            <span id="compare-ebit-val" class="pill-val font-mono">₹2,00,000</span>
+          </div>
+          <div class="metric-pill">
+            <span class="pill-label">Corporate Tax</span>
+            <span id="compare-tax-val" class="pill-val font-mono">35%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Visual Charts: Donut Charts + EPS Bar Chart -->
+      <div class="compare-charts-grid">
+        <!-- EPS Comparison Chart -->
+        <div class="card chart-box">
+          <div class="box-header">
+            <h3 class="card-title">📊 EPS Comparison at Current EBIT</h3>
+            <p class="card-desc">Direct EPS comparison across all plans at selected EBIT</p>
+          </div>
+          <div class="canvas-wrap-small">
+            <canvas id="epsBarCanvas" width="450" height="260"></canvas>
+          </div>
+        </div>
+
+        <!-- Donut Charts: Capital Mix -->
+        <div class="card chart-box">
+          <div class="box-header">
+            <h3 class="card-title">🍰 Financing Structure Mix (Debt vs Equity vs Pref)</h3>
+            <div class="legend-chips">
+              <span class="legend-chip"><span class="chip-dot bg-blue"></span> Equity</span>
+              <span class="legend-chip"><span class="chip-dot bg-green"></span> Debt</span>
+              <span class="legend-chip"><span class="chip-dot bg-purple"></span> Preference</span>
+            </div>
+          </div>
+          <div id="donuts-container" class="donuts-grid"></div>
+        </div>
+      </div>
+
+      <!-- Detailed Statement Cards Grid -->
+      <div>
+        <h3 class="section-title mb-3">Detailed Financial Statement Cards</h3>
+        <div id="compare-statement-cards" class="statement-cards-grid"></div>
+      </div>
+    </section>
+
+    <!-- ===================================================== -->
+    <!-- TAB 4: SENSITIVITY ANALYSIS -->
+    <!-- ===================================================== -->
+    <section id="tab-sensitivity" class="tab-panel">
+      <div class="card controls-card">
+        <div class="section-toolbar mb-0">
+          <div>
+            <h2 class="section-title">📈 EBIT Sensitivity Analysis</h2>
+            <p class="section-subtitle">Simulate EPS outcomes across various operating income scenarios to identify leverage inflection points.</p>
+          </div>
+          <div class="btn-group-presets">
+            <button type="button" id="btn-sens-default" class="btn btn-outline">Standard 50k–150k</button>
+            <button type="button" id="btn-sens-100k" class="btn btn-outline">100k–300k</button>
+            <button type="button" id="btn-sens-200k" class="btn btn-outline">200k–600k</button>
+          </div>
+        </div>
+
+        <div class="add-point-bar">
+          <form id="form-add-sens-point" class="add-point-form">
+            <input type="number" id="input-new-sens" class="form-input" placeholder="Add custom EBIT (e.g. 175000)" min="0" step="5000">
+            <button type="submit" class="btn btn-primary">Add Point</button>
+          </form>
+          <div class="active-chips-wrap">
+            <span class="chips-label">Active Levels:</span>
+            <div id="sens-points-chips" class="chips-list"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sensitivity Table -->
+      <div class="card table-card">
+        <div class="table-header">
+          <h3 class="card-title">Sensitivity Results Table</h3>
+          <span class="helper-text">Highlighted: Best Performing Plan at each EBIT tier</span>
+        </div>
+        <div class="table-scroll">
+          <table class="data-table" id="sensitivity-table">
+            <thead id="sensitivity-thead"></thead>
+            <tbody id="sensitivity-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Sensitivity Multi-Line Chart -->
+      <div class="card chart-card">
+        <div class="chart-header">
+          <div>
+            <h3 class="card-title">📈 EPS Sensitivity Trajectory Chart</h3>
+            <p class="card-desc">Compare how steeply EPS rises with higher EBIT across each financing choice.</p>
+          </div>
+        </div>
+        <div class="canvas-container">
+          <canvas id="sensitivityCanvas" width="900" height="340"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================== -->
+    <!-- TAB 5: LEARNING LAB & FORMULAS -->
+    <!-- ===================================================== -->
+    <section id="tab-learning" class="tab-panel">
+      <!-- Sub-tabs -->
+      <div class="sub-nav-tabs">
+        <button class="sub-tab active" data-sub="sub-guide">Concepts & Explanation</button>
+        <button class="sub-tab" data-sub="sub-formulas">Formula Cheat Sheet</button>
+        <button class="sub-tab" data-sub="sub-quiz">Interactive Knowledge Quiz</button>
+      </div>
+
+      <!-- Sub-panel 1: Educational Concepts -->
+      <div id="sub-guide" class="sub-panel active">
+        <div class="concept-card">
+          <div class="concept-header">
+            <span class="concept-icon">⚖️</span>
+            <h3 class="concept-title">1. What is Capital Structure?</h3>
+          </div>
+          <p class="concept-text">
+            <strong>Capital Structure</strong> refers to the permanent long-term financing mix of a company, represented by the proportionate relationship between <strong>debt capital</strong>, <strong>common equity capital</strong>, and <strong>preference share capital</strong> used by a company to finance its operations and investments.
+          </p>
+          <div class="concept-columns">
+            <div class="mini-card bg-blue-subtle">
+              <strong class="text-blue">Common Equity</strong>
+              <p>Represents residual ownership. Equity shares carry no fixed obligation to pay dividends, but dilute earnings per share (EPS) and control.</p>
+            </div>
+            <div class="mini-card bg-green-subtle">
+              <strong class="text-green">Debt Capital</strong>
+              <p>Fixed-cost borrowing (bonds, debentures, loans). Interest is legally mandatory regardless of profit, but is tax-deductible and avoids equity dilution.</p>
+            </div>
+            <div class="mini-card bg-purple-subtle">
+              <strong class="text-purple">Preference Capital</strong>
+              <p>Hybrid security with a fixed dividend rate payable after corporate tax but before common equity distributions.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-header">
+            <span class="concept-icon">📈</span>
+            <h3 class="concept-title">2. What is EBIT–EPS Analysis?</h3>
+          </div>
+          <p class="concept-text">
+            <strong>EBIT–EPS Analysis</strong> is a vital financial planning technique that investigates how alternative financing options affect a company's <strong>Earnings Per Share (EPS)</strong> across different levels of <strong>Earnings Before Interest and Taxes (EBIT)</strong>.
+          </p>
+          <p class="concept-text">
+            Because interest is a fixed financial charge, employing debt causes EPS to fluctuate more widely than EBIT. EBIT–EPS analysis charts these relationships to determine which financing plan maximizes shareholder wealth under expected operating performance.
+          </p>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-header">
+            <span class="concept-icon">🎯</span>
+            <h3 class="concept-title">3. What is Break-even EBIT / Indifference Point?</h3>
+          </div>
+          <p class="concept-text">
+            The <strong>EBIT Indifference Point</strong> is the specific operating profit level where the <strong>EPS generated by Plan 1 equals the EPS generated by Plan 2</strong>.
+          </p>
+          <div class="decision-box">
+            <strong>The Golden Decision Rule:</strong>
+            <ul>
+              <li><strong>If Expected EBIT &gt; Indifference EBIT:</strong> The financing plan with <em>higher debt / higher financial leverage</em> is superior because the return on capital exceeds debt cost, boosting EPS ("Trading on Equity").</li>
+              <li><strong>If Expected EBIT &lt; Indifference EBIT:</strong> The financing plan with <em>lower debt / higher equity</em> is superior, as the burden of fixed interest reduces earnings per share.</li>
+              <li><strong>If Expected EBIT = Indifference EBIT:</strong> Both plans produce the identical EPS.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="concept-card">
+          <div class="concept-header">
+            <span class="concept-icon">💡</span>
+            <h3 class="concept-title">4. Why is EBIT–EPS Analysis Used?</h3>
+          </div>
+          <p class="concept-text">
+            EBIT–EPS analysis enables finance executives, investors, and students to evaluate the interconnected trade-offs in corporate capital budgeting:
+          </p>
+          <div class="tradeoff-grid">
+            <div class="tradeoff-item">
+              <strong>📈 Operating Profit Sensitivity</strong>
+              <p>See how small percentage shifts in EBIT trigger magnified shifts in EPS.</p>
+            </div>
+            <div class="tradeoff-item">
+              <strong>🛡️ Interest Tax Shield</strong>
+              <p>Quantify the corporate tax saved by debt: Interest × Tax Rate.</p>
+            </div>
+            <div class="tradeoff-item">
+              <strong>⚡ Trading on Equity</strong>
+              <p>Use fixed-cost debt to augment common shareholders' rate of return.</p>
+            </div>
+            <div class="tradeoff-item">
+              <strong>⚖️ Financial Risk Assessment</strong>
+              <p>Identify the risk of bankruptcy if EBIT falls below financial break-even.</p>
+            </div>
+            <div class="tradeoff-item">
+              <strong>👥 Equity Dilution</strong>
+              <p>Weigh issuing more shares (diluting EPS) vs taking on fixed debt interest.</p>
+            </div>
+            <div class="tradeoff-item">
+              <strong>🎯 Optimal Leverage Choice</strong>
+              <p>Select the debt-equity ratio that maximizes EPS at target EBIT.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sub-panel 2: Formula Cheat Sheet -->
+      <div id="sub-formulas" class="sub-panel">
+        <div class="formula-card">
+          <span class="formula-tag">Formula 1: Earnings Per Share (EPS)</span>
+          <div class="formula-math font-mono">
+            EPS = [(EBIT − Interest) × (1 − Tax Rate) − Preference Dividend] ÷ Number of Equity Shares
+          </div>
+          <ul class="formula-variables">
+            <li><strong>EBIT:</strong> Earnings Before Interest and Taxes (Operating Profit)</li>
+            <li><strong>Interest:</strong> Debt Amount × Interest Rate %</li>
+            <li><strong>(1 − Tax Rate):</strong> Tax retention multiplier</li>
+            <li><strong>Preference Dividend:</strong> Preference Capital × Dividend Rate %</li>
+            <li><strong>Number of Shares (N):</strong> Equity Capital ÷ Issue Price per Share</li>
+          </ul>
+        </div>
+
+        <div class="formula-card">
+          <span class="formula-tag tag-amber">Formula 2: EBIT–EPS Indifference Point (EBIT*)</span>
+          <div class="formula-math font-mono">
+            EBIT* = { N₂ × [I₁(1−T) + PD₁] − N₁ × [I₂(1−T) + PD₂] } ÷ [ (N₂ − N₁) × (1 − T) ]
+          </div>
+          <ul class="formula-variables">
+            <li><strong>N₁, N₂:</strong> Equity shares in Plan 1 and Plan 2</li>
+            <li><strong>I₁, I₂:</strong> Annual interest in Plan 1 and Plan 2</li>
+            <li><strong>PD₁, PD₂:</strong> Preference dividends in Plan 1 and Plan 2</li>
+            <li><strong>Note:</strong> If N₁ = N₂, lines are parallel and no indifference point exists!</li>
+          </ul>
+        </div>
+
+        <div class="formula-card">
+          <span class="formula-tag tag-green">Formula 3: Financial Break-Even EBIT (where EPS = 0)</span>
+          <div class="formula-math font-mono">
+            EBIT_BE = Interest + [ Preference Dividend ÷ (1 − Tax Rate) ]
+          </div>
+          <ul class="formula-variables">
+            <li>Represents the minimum operating profit required to cover fixed financial charges.</li>
+            <li>For an all-equity firm (Interest = 0, PD = 0), Financial Break-Even EBIT is ₹0.</li>
+          </ul>
+        </div>
+
+        <div class="formula-card">
+          <span class="formula-tag tag-purple">Formula 4: Degree of Financial Leverage (DFL)</span>
+          <div class="formula-math font-mono">
+            DFL = EBIT ÷ [ EBIT − Interest − (Preference Dividend ÷ (1 − Tax Rate)) ]
+          </div>
+          <ul class="formula-variables">
+            <li>Measures percentage change in EPS resulting from a 1% change in EBIT.</li>
+            <li>Higher DFL means higher financial risk and steeper EBIT-EPS trajectory slope.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Sub-panel 3: Interactive Quiz -->
+      <div id="sub-quiz" class="sub-panel">
+        <div class="card p-5">
+          <div class="quiz-header">
+            <div>
+              <h3 class="card-title">🏆 Capital Structure Knowledge Quiz</h3>
+              <p class="card-desc">Test your understanding of EBIT–EPS analysis, leverage, and indifference points.</p>
+            </div>
+            <div id="quiz-score-badge" class="quiz-score-badge hidden">Score: 0 / 5</div>
+          </div>
+
+          <div id="quiz-questions-list" class="quiz-questions-list"></div>
+
+          <div class="quiz-footer">
+            <button type="button" id="btn-submit-quiz" class="btn btn-primary">Submit Answers & Check Score</button>
+            <button type="button" id="btn-reset-quiz" class="btn btn-outline hidden">Retry Quiz</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================== -->
+    <!-- TAB 6: HISTORY & SCENARIOS -->
+    <!-- ===================================================== -->
+    <section id="tab-history" class="tab-panel">
+      <div class="card p-5">
+        <div class="section-toolbar mb-0">
+          <div>
+            <h2 class="section-title">📜 Calculation History & Saved Scenarios</h2>
+            <p class="section-subtitle">Revisit, restore, and analyze previously saved capital structure evaluations.</p>
+          </div>
+          <div class="history-actions">
+            <button type="button" id="btn-export-csv" class="btn btn-secondary">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Export CSV
+            </button>
+            <button type="button" id="btn-print-report" class="btn btn-secondary">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+              Print Report
+            </button>
+            <button type="button" id="btn-clear-history" class="btn btn-danger">Clear All</button>
+          </div>
+        </div>
+
+        <div id="history-items-container" class="history-items-container"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===================================================== -->
+  <!-- MODAL: ADD / EDIT PLAN -->
+  <!-- ===================================================== -->
+  <div id="modal-plan" class="modal-overlay hidden">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <div>
+          <h3 id="modal-plan-title" class="modal-title">Add New Financing Plan</h3>
+          <p class="modal-desc">Configure debt, equity shares, and preference capital specifications.</p>
+        </div>
+        <button type="button" class="modal-close" id="btn-close-plan-modal">&times;</button>
+      </div>
+
+      <form id="form-plan" class="modal-body">
+        <input type="hidden" id="plan-id">
+
+        <!-- Plan Name & Color -->
+        <div class="form-row">
+          <div class="form-group flex-2">
+            <label class="form-label" for="plan-name">Plan Name <span class="text-danger">*</span></label>
+            <input type="text" id="plan-name" class="form-input" placeholder="e.g. Plan B: 50% Debt" required>
+          </div>
+          <div class="form-group flex-1">
+            <label class="form-label">Color Theme</label>
+            <div id="color-palette-picker" class="palette-picker"></div>
+            <input type="hidden" id="plan-color" value="#3b82f6">
+          </div>
+        </div>
+
+        <!-- Section 1: Equity Financing -->
+        <div class="form-box bg-blue-subtle">
+          <div class="box-title text-blue">🏛️ Common Equity Financing</div>
+          <div class="form-grid-3">
+            <div class="form-group">
+              <label class="form-label" for="plan-equity-amt">Equity Capital (<span class="curr-sym">₹</span>)</label>
+              <input type="number" id="plan-equity-amt" class="form-input" min="0" step="1000" value="500000">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="plan-share-price">Share Price (<span class="curr-sym">₹</span>)</label>
+              <input type="number" id="plan-share-price" class="form-input" min="1" step="1" value="10">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="plan-shares-cnt">Number of Shares (N) <span class="text-danger">*</span></label>
+              <input type="number" id="plan-shares-cnt" class="form-input font-bold" min="1" step="1" value="50000" required>
+            </div>
+          </div>
+          <p class="form-hint">Number of shares is auto-calculated from Equity ÷ Share Price, or you can type it directly.</p>
+        </div>
+
+        <!-- Section 2: Debt Financing -->
+        <div class="form-box bg-green-subtle">
+          <div class="box-title text-green">💳 Debt Financing & Interest</div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label" for="plan-debt-amt">Debt / Debentures (<span class="curr-sym">₹</span>)</label>
+              <input type="number" id="plan-debt-amt" class="form-input" min="0" step="1000" value="500000">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="plan-interest-rate">Interest Rate (%)</label>
+              <input type="number" id="plan-interest-rate" class="form-input" min="0" max="100" step="0.1" value="10">
+            </div>
+          </div>
+          <div class="calc-preview text-green">
+            <span>Annual Interest Expense (I):</span>
+            <span id="plan-interest-preview" class="font-mono font-bold">₹50,000</span>
+          </div>
+        </div>
+
+        <!-- Section 3: Preference Shares -->
+        <div class="form-box bg-purple-subtle">
+          <div class="box-title text-purple">⭐ Preference Share Capital (Optional)</div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label" for="plan-pref-amt">Preference Capital (<span class="curr-sym">₹</span>)</label>
+              <input type="number" id="plan-pref-amt" class="form-input" min="0" step="1000" value="0">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="plan-pref-rate">Dividend Rate (%)</label>
+              <input type="number" id="plan-pref-rate" class="form-input" min="0" max="100" step="0.1" value="9">
+            </div>
+          </div>
+          <div class="calc-preview text-purple" id="plan-pref-preview-row">
+            <span>Annual Preference Dividend (PD):</span>
+            <span id="plan-pref-preview" class="font-mono font-bold">₹0</span>
+          </div>
+        </div>
+
+        <!-- Total Capital Summary -->
+        <div class="total-capital-bar">
+          <span>Total Capital Raised:</span>
+          <span id="plan-total-preview" class="font-mono font-bold">₹10,00,000</span>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" id="btn-cancel-plan">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="btn-save-plan">Save Plan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===================================================== -->
+  <!-- MODAL: STEP-BY-STEP BREAKDOWN -->
+  <!-- ===================================================== -->
+  <div id="modal-step" class="modal-overlay hidden">
+    <div class="modal-dialog modal-dialog-lg">
+      <div class="modal-header header-gradient">
+        <div>
+          <div class="flex-row items-center gap-2">
+            <h3 id="step-modal-title" class="modal-title text-white">Plan Calculation Process</h3>
+            <span class="step-tag">Step-by-Step Breakdown</span>
+          </div>
+          <p class="modal-desc text-white-80">Detailed mathematical evaluation of operating profit, taxes, leverage, and EPS.</p>
+        </div>
+        <button type="button" class="modal-close text-white" id="btn-close-step-modal">&times;</button>
+      </div>
+
+      <div class="modal-body" id="step-modal-body"></div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="btn-done-step">Close Breakdown</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- App Script -->
+  <script src="app.js"></script>
+</body>
+</html>
